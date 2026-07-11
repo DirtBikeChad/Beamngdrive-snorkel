@@ -45,8 +45,11 @@ Per vehicle, at load:
 
 - **Snorkel sensors** — one node per height is picked as the virtual snorkel opening:
   the node whose design-space Z is closest to `bottom + fraction × vehicle height`, with
-  fractions 0.55 (SMALL, ~hood), 0.75 (MEDIUM, ~mirrors) and 1.0 (TALL, the actual
-  highest node — roof line / rollcage top).
+  fractions 0.55 (SMALL, ~hood) and 1.0 (MEDIUM, the highest node — roof line). TALL
+  uses the highest node too, but extends a *virtual mast* 1 m above it: when the roof
+  node submerges, the water-surface height is recorded, and flooding only starts once
+  the vehicle has sunk a further metre below that surface (still-water approximation —
+  there is no game API to test water at a point without a physics node).
 
 Per frame (`updateGFX`):
 

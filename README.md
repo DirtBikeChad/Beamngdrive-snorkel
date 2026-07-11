@@ -25,8 +25,8 @@ The mod has two parts that work together:
 - **Five snorkel modes**, cycled with a single keybind, applied to every spawned vehicle:
   - **OFF** — stock behaviour: drive into deep water and the engine floods and hydrolocks.
   - **SMALL** — snorkel opening at ~hood height (55% of the vehicle's height).
-  - **MEDIUM** — snorkel opening at ~mirror height (75% of the vehicle's height).
-  - **TALL** — snorkel opening at the vehicle's highest point (roof line).
+  - **MEDIUM** — snorkel opening at the roof line (the vehicle's highest point).
+  - **TALL** — virtual mast reaching ~1 m above the roof, for properly deep water.
   - **MAX** — fully waterproof intake. The engine never hydrolocks, even fully submerged.
 
   In SMALL/MEDIUM/TALL the rule is exactly what you'd expect from a real snorkel: **water
@@ -92,8 +92,8 @@ extensions.universalSnorkel.getMode()
 1. Spawn any D-Series, open **vehicle config / parts selector** (Ctrl+W or the Vehicle
    Config menu).
 2. Find **Additional Modification → "Snorkel (Right A-Pillar)"** and select it.
-3. A **"Snorkel"** slot appears — choose **Small** (hood height), **Medium** (mirror
-   height) or **Tall** (roof height).
+3. A **"Snorkel"** slot appears — choose **Small** (hood height), **Medium** (roof
+   line) or **Tall** (mast reaching ~0.65 m above the roof, for deep water).
 4. The wading rule is physical: the air intake node sits in the ram head opening at the
    top of the tube. Water below it — engine breathes. Water at or above it — the engine
    floods and starts hydrolocking, exactly like stock deep-water behaviour.
@@ -173,7 +173,7 @@ build.sh / build.bat                                       zip packagers
 ```
 
 The visible part placement was derived from real D-Series-class dimensions; if the tube
-sits slightly off your cab, all coordinates live in plain text — tweak the `P0…TIP_TALL`
+sits slightly off your cab, all coordinates live in plain text — tweak the `P0…PATHS`
 constants in `tools/generate_snorkel_dae.py`, re-run it, and mirror the same numbers in
 `pickup_snorkel.jbeam` (the `snb/snk/snp/snt/snh` node lines).
 

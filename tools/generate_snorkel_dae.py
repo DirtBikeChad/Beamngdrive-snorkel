@@ -3,8 +3,12 @@
 
 Produces one COLLADA file containing three objects (snorkel_small,
 snorkel_medium, snorkel_tall), each a tube that runs from the engine bay,
-over the right fender, up the A-pillar, ending in a forward-facing ram head.
-Also adds two bracket stubs toward the cab.
+over the right fender and up the A-pillar, ending in a flared, forward-facing
+mitre-cut opening (the classic 4x4 snorkel top). The tall version continues
+as a vertical mast well above the roof line. Also adds two bracket stubs
+toward the cab.
+
+Heights: small = hood, medium = roof line, tall = ~0.65 m above the roof.
 
 Run from the repo root:  python3 tools/generate_snorkel_dae.py
 Output: vehicles/pickup/universalSnorkel/snorkel.dae
@@ -13,22 +17,30 @@ Output: vehicles/pickup/universalSnorkel/snorkel.dae
 import math
 import os
 
-SEGMENTS = 20          # radial resolution of the tubes
-TUBE_R = 0.042         # main tube radius (~84 mm OD, typical safari snorkel)
-HEAD_R = 0.062         # ram head radius
-HEAD_LEN = 0.17        # ram head length
-BRACKET_R = 0.016
-BRACKET_LEN = 0.085    # bracket stub toward the cab
+SEGMENTS = 24          # radial resolution of the tubes
+TUBE_R = 0.040         # main tube radius (~80 mm OD, typical safari snorkel)
+FLARE = 1.12           # slight flare of the mitre opening
+BRACKET_R = 0.014
+BRACKET_LEN = 0.06     # bracket stub toward the cab
 MATERIAL = "snorkel_black"
 
 # Path stations in vehicle space (x right(-)/left(+), y front(-)/rear(+), z up)
-P0 = (-0.90, -1.16, 0.97)   # engine-bay end, above/behind right fender area
-P1 = (-0.995, -0.86, 1.04)  # over the fender edge, start of the vertical run
-P2 = (-0.995, -0.74, 1.08)  # A-pillar base
-TIP_TALL = (-0.995, -0.40, 1.86)  # roof line
-# A-pillar direction from P2 to TIP_TALL; small/medium tips lie along it
-TIP_Z = {"small": 1.24, "medium": 1.54, "tall": 1.86}
-HEAD_DIR = (0.0, -0.966, 0.259)   # ram head axis: forward, tilted 15 deg up
+# The tube climbs the fender, then follows the A-pillar rake; the tall
+# version continues as a vertical mast above the roof line.
+P0 = (-0.90, -1.16, 0.97)    # engine-bay end, above/behind right fender area
+P1 = (-0.99, -0.92, 1.05)    # over the fender edge, ahead of the door seam
+P2 = (-0.99, -0.86, 1.30)    # A-pillar base (bottom corner of the windshield)
+ROOF = (-0.99, -0.52, 1.88)  # A-pillar top / roof line (follows pillar rake)
+TIP_SMALL = (-0.99, -0.88, 1.30)   # hood height
+TIP_TALL = (-0.99, -0.52, 2.53)    # mast top, well above the roof
+# opening faces forward and slightly up (mitre-cut like real 4x4 snorkels)
+MITRE_N = (0.0, -0.707, 0.707)
+
+PATHS = {
+    "small": [P0, P1, TIP_SMALL],
+    "medium": [P0, P1, P2, ROOF],
+    "tall": [P0, P1, P2, ROOF, TIP_TALL],
+}
 
 
 def vsub(a, b):
@@ -58,10 +70,8 @@ def vcross(a, b):
             a[0] * b[1] - a[1] * b[0])
 
 
-def tip_for(size):
-    d = vnorm(vsub(TIP_TALL, P2))
-    t = (TIP_Z[size] - P2[2]) / d[2]
-    return vadd(P2, vscale(d, t))
+def vdot(a, b):
+    return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]
 
 
 class MeshBuilder:
@@ -75,8 +85,15 @@ class MeshBuilder:
         self.normals.append(n)
         return len(self.positions) - 1
 
-    def add_tube(self, path, radius, cap_start=True, cap_end=True):
-        """Sweeps a circle along a polyline, sharing rings at the joints."""
+    def add_tube(self, path, radius, cap_start=True, cap_end=True,
+                 end_cut_normal=None, end_flare=1.0):
+        """Sweeps a circle along a polyline, sharing rings at the joints.
+
+        end_cut_normal: if set, the final ring is projected onto the plane
+        through the last station with this normal — a mitre cut, like the
+        angled opening of a classic 4x4 snorkel. end_flare scales the final
+        ring radius slightly outward.
+        """
         # ring orientation per station: average of adjacent segment tangents
         tangents = []
         for i in range(len(path)):
@@ -90,7 +107,9 @@ class MeshBuilder:
             tangents.append(vnorm(t))
 
         rings = []
-        for p, t in zip(path, tangents):
+        for i, (p, t) in enumerate(zip(path, tangents)):
+            is_last = i == len(path) - 1
+            r = radius * (end_flare if is_last else 1.0)
             # build a frame perpendicular to the tangent
             ref = (1.0, 0.0, 0.0) if abs(t[0]) < 0.9 else (0.0, 1.0, 0.0)
             u = vnorm(vcross(t, ref))
@@ -99,7 +118,14 @@ class MeshBuilder:
             for s in range(SEGMENTS):
                 a = 2 * math.pi * s / SEGMENTS
                 n = vadd(vscale(u, math.cos(a)), vscale(w, math.sin(a)))
-                ring.append(self.add_vertex(vadd(p, vscale(n, radius)), n))
+                vtx = vadd(p, vscale(n, r))
+                if is_last and end_cut_normal is not None:
+                    # slide the vertex along the tube axis onto the cut plane
+                    dn = vdot(t, end_cut_normal)
+                    if abs(dn) > 1e-6:
+                        shift = -vdot(vsub(vtx, p), end_cut_normal) / dn
+                        vtx = vadd(vtx, vscale(t, shift))
+                ring.append(self.add_vertex(vtx, n))
             rings.append(ring)
 
         for r0, r1 in zip(rings, rings[1:]):
@@ -112,6 +138,8 @@ class MeshBuilder:
             if not cap:
                 continue
             t = tangents[ring_i]
+            if ring_i == -1 and end_cut_normal is not None:
+                t = vnorm(end_cut_normal)
             n = vscale(t, -1.0) if flip else t
             center = self.add_vertex(path[ring_i], n)
             ring = rings[ring_i]
@@ -125,16 +153,14 @@ class MeshBuilder:
 
 def build_snorkel(size):
     m = MeshBuilder()
-    tip = tip_for(size)
-    # main tube: engine bay -> fender -> A-pillar -> tip
-    m.add_tube([P0, P1, P2, tip], TUBE_R, cap_start=True, cap_end=True)
-    # ram head: wider tube from just behind the tip, facing forward/up
-    head_start = vadd(tip, vscale(HEAD_DIR, -0.02))
-    head_end = vadd(tip, vscale(HEAD_DIR, HEAD_LEN))
-    m.add_tube([head_start, head_end], HEAD_R, cap_start=True, cap_end=True)
-    # bracket stubs toward the cab (inboard, +x direction)
-    for frac in (0.25, 0.75):
-        base = vadd(P2, vscale(vsub(tip, P2), frac))
+    path = PATHS[size]
+    # main tube with a flared, forward-facing mitre-cut opening at the top
+    m.add_tube(path, TUBE_R, cap_start=True, cap_end=True,
+               end_cut_normal=MITRE_N, end_flare=FLARE)
+    # bracket stubs toward the cab (inboard, +x direction) along the pillar run
+    pillar_a, pillar_b = path[-2], path[-1]
+    for frac in (0.3, 0.8):
+        base = vadd(pillar_a, vscale(vsub(pillar_b, pillar_a), frac))
         m.add_tube([base, vadd(base, (BRACKET_LEN, 0.0, 0.0))], BRACKET_R,
                    cap_start=False, cap_end=True)
     return m
@@ -237,7 +263,7 @@ def main():
         f.write(dae)
     print("wrote", out)
     for size in sizes:
-        print(f"  snorkel_{size}: tip at {tip_for(size)}")
+        print(f"  snorkel_{size}: opening at {PATHS[size][-1]}")
 
 
 if __name__ == "__main__":

@@ -14,8 +14,8 @@
 -- Modes:
 --   off    — stock behaviour, engine floods as usual
 --   small  — snorkel opening at ~hood height (55% of the vehicle's height)
---   medium — snorkel opening at ~mirror height (75% of the vehicle's height)
---   tall   — snorkel opening at the vehicle's highest point (roof line)
+--   medium — snorkel opening at the roof line (vehicle's highest point)
+--   tall   — virtual mast ~1 m above the roof, for properly deep water
 --   max    — intake is fully waterproof, engine never hydrolocks
 --
 -- In small/medium/tall the engine keeps running while the water is below the
@@ -35,12 +35,15 @@ local VALID_MODES = {off = true, small = true, medium = true, tall = true, max =
 local MODE_LABELS = {
   off = "OFF — stock air intake",
   small = "SMALL — hood-height snorkel",
-  medium = "MEDIUM — mirror-height snorkel",
-  tall = "TALL — roof-height snorkel",
+  medium = "MEDIUM — roof-height snorkel",
+  tall = "TALL — mast ~1 m above the roof",
   max = "MAX — fully waterproof intake"
 }
--- snorkel opening height as a fraction of the vehicle's total height
-local MODE_HEIGHT_FRACTION = {small = 0.55, medium = 0.75, tall = 1.0}
+-- snorkel opening height as a fraction of the vehicle's total height;
+-- "tall" additionally extends a virtual mast above the highest node
+local MODE_HEIGHT_FRACTION = {small = 0.55, medium = 1.0, tall = 1.0}
+-- how far the TALL virtual mast reaches above the vehicle's highest point (m)
+local TALL_MAST_HEIGHT = 1.0
 
 local logTag = "universalSnorkelVehicle"
 
@@ -50,6 +53,18 @@ local sensorCids = {} -- mode -> node cid used as the snorkel opening
 local snorkelUnderwater = false
 local warnedNoFloodField = false
 local rescanTimer = 0
+-- TALL mode: world z of the water surface, recorded the moment the highest
+-- node goes under. While submerged, the mast opening is underwater once the
+-- vehicle has sunk more than TALL_MAST_HEIGHT below that surface.
+local tallWaterlineZ = nil
+
+local function sensorWorldZ(cid)
+  local ok, z = pcall(function()
+    return obj:getPosition().z + obj:getNodePosition(cid).z
+  end)
+  if ok and type(z) == "number" then return z end
+  return nil
+end
 
 -- Engine discovery -----------------------------------------------------------
 
@@ -223,6 +238,24 @@ local function updateGFX(dt)
   local sensorCid = sensorCids[mode]
   if sensorCid then -- small / medium / tall: check the snorkel opening
     local underwater = obj:inWater(sensorCid) and true or false
+
+    if mode == "tall" then
+      -- The mast opening sits TALL_MAST_HEIGHT above the highest node, so the
+      -- roof going under doesn't flood yet. Record the water surface height
+      -- when the roof submerges and only flood once the vehicle has sunk
+      -- deeper than the mast. (Assumes still water — rivers/lakes.)
+      if underwater then
+        local z = sensorWorldZ(sensorCid)
+        if z then
+          if tallWaterlineZ == nil then tallWaterlineZ = z end
+          underwater = (tallWaterlineZ - z) >= TALL_MAST_HEIGHT
+        end
+        -- if the position probe failed, fall back to roof-level behaviour
+      else
+        tallWaterlineZ = nil
+      end
+    end
+
     if underwater ~= snorkelUnderwater then
       snorkelUnderwater = underwater
       if guihooks then
@@ -266,6 +299,7 @@ local function onReset()
   -- Powertrain state is rebuilt on vehicle reset (Ctrl+R / recovery)
   scanEngines()
   snorkelUnderwater = false
+  tallWaterlineZ = nil
 end
 
 M.setMode = setMode
