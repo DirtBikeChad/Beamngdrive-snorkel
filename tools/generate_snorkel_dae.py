@@ -56,7 +56,7 @@ PATHS = {
 
 # bumped whenever mesh/node layout changes: new object names force BeamNG to
 # rebuild its mesh/binding cache instead of pairing new meshes with stale data
-OBJ_SUFFIX = "_v7"
+OBJ_SUFFIX = "_v8"
 
 
 def vsub(a, b):
@@ -173,8 +173,9 @@ def build_snorkel(size):
     # main tube with a flared, forward-facing mitre-cut opening at the top
     m.add_tube(path, TUBE_R, cap_start=True, cap_end=True,
                end_cut_normal=MITRE_N, end_flare=FLARE)
-    # bracket stubs toward the cab (inboard, +x direction) along the pillar run
-    pillar_a, pillar_b = path[2], path[-2]
+    # bracket stubs toward the cab (inboard, +x direction) — always on the
+    # A-pillar section (P2..RT), never on the mast, whatever the tube height
+    pillar_a, pillar_b = P2, RT
     for frac in (0.3, 0.8):
         base = vadd(pillar_a, vscale(vsub(pillar_b, pillar_a), frac))
         m.add_tube([base, vadd(base, (BRACKET_LEN, 0.0, 0.0))], BRACKET_R,
@@ -272,7 +273,7 @@ def main():
 </COLLADA>
 """
     out = os.path.join(os.path.dirname(__file__), "..",
-                       "vehicles", "pickup", "universalSnorkel", "snorkel_v7.dae")
+                       "vehicles", "pickup", "universalSnorkel", "snorkel_v8.dae")
     out = os.path.normpath(out)
     os.makedirs(os.path.dirname(out), exist_ok=True)
     with open(out, "w") as f:

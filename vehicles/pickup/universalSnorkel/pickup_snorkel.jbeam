@@ -21,7 +21,7 @@
     "slotType" : "pickup_snorkel_tube",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
-        ["snorkel_small_v7", ["pickup_snorkel"]],
+        ["snorkel_small_v8", ["pickup_snorkel"]],
     ],
     "nodes": [
         ["id", "posX", "posY", "posZ"],
@@ -102,7 +102,7 @@
     "slotType" : "pickup_snorkel_tube",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
-        ["snorkel_medium_v7", ["pickup_snorkel"]],
+        ["snorkel_medium_v8", ["pickup_snorkel"]],
     ],
     "nodes": [
         ["id", "posX", "posY", "posZ"],
@@ -192,7 +192,7 @@
     "slotType" : "pickup_snorkel_tube",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
-        ["snorkel_tall_v7", ["pickup_snorkel"]],
+        ["snorkel_tall_v8", ["pickup_snorkel"]],
     ],
     "nodes": [
         ["id", "posX", "posY", "posZ"],
