@@ -44,21 +44,25 @@ The mod has two parts that work together:
 
 ## Installation
 
-**Option A — packaged zip (recommended)**
+**Option A — download the ready-made zip (recommended)**
 
-1. Build `UniversalSnorkel.zip` with one command (see [Building the zip](#building-the-zip)
-   below) — or simply select the `lua` and `scripts` folders and compress them into a zip
-   yourself (they must sit at the top level of the zip).
+1. Download [`UniversalSnorkel.zip`](UniversalSnorkel.zip) from this repository
+   (open the file on GitHub → "Download raw file" button). Do **not** unzip it.
 2. Drop it into your BeamNG mods folder:
    - Windows: `%LocalAppData%\BeamNG.drive\<version>\mods\` (or open it in-game via
      *Repository → Open mods folder*)
-3. Start the game (or enable the mod in the Mods menu).
+3. Start the game (or enable the mod in the Mods menu). That's it — the mod is active
+   immediately: every vehicle spawns with the TALL virtual snorkel by default, and the
+   D-Series "Snorkel" parts are available in the vehicle config.
+
+To rebuild the zip yourself, run `./build.sh` / `build.bat`, or just compress the `lua`,
+`scripts` and `vehicles` folders into a zip (they must sit at the top level of the zip).
 
 **Option B — unpacked (for tinkering)**
 
-Copy the `lua/` and `scripts/` folders into
+Copy the `lua/`, `scripts/` and `vehicles/` folders into
 `mods/unpacked/universalSnorkel/` inside your user folder, so you end up with
-`mods/unpacked/universalSnorkel/lua/...` and `mods/unpacked/universalSnorkel/scripts/...`.
+`mods/unpacked/universalSnorkel/lua/...` etc.
 
 ## Usage
 
