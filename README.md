@@ -93,7 +93,7 @@ extensions.universalSnorkel.getMode()
    Config menu).
 2. Find **Additional Modification → "Snorkel (Right A-Pillar)"** and select it.
 3. A **"Snorkel"** slot appears — choose **1. Small** (roof height, the default),
-   **2. Medium** (~0.55 m above the roof) or **3. Tall** (high mast, ~1.1 m above the
+   **2. Medium** (~0.8 m above the roof) or **3. Tall** (high mast, ~1.5 m above the
    roof for really deep water).
 4. The wading rule is physical: the air intake node sits in the ram head opening at the
    top of the tube. Water below it — engine breathes. Water at or above it — the engine
