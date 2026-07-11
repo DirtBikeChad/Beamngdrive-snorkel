@@ -15,13 +15,13 @@
 "pickup_snorkel_tube_small": {
     "information":{
         "authors":"DirtBikeChad",
-        "name":"1. Small Snorkel (mirror height)",
+        "name":"1. Small Snorkel (roof height)",
         "value":180,
     },
     "slotType" : "pickup_snorkel_tube",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
-        ["snorkel_small", ["pickup_snorkel"]],
+        ["snorkel_small_v3", ["pickup_snorkel"]],
     ],
     "nodes": [
         ["id", "posX", "posY", "posZ"],
@@ -37,7 +37,7 @@
         //opening: this node is the functional air intake.
         //water at or above this point floods the engine.
         {"engineGroup":["engine_intake"]},
-        ["snh", -0.985, -0.73, 1.62],
+        ["snh", -0.98, -0.58, 2.00],
         {"engineGroup":""},
         {"group":""},
     ],
@@ -94,7 +94,7 @@
     "slotType" : "pickup_snorkel_tube",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
-        ["snorkel_medium", ["pickup_snorkel"]],
+        ["snorkel_medium_v3", ["pickup_snorkel"]],
     ],
     "nodes": [
         ["id", "posX", "posY", "posZ"],
@@ -111,7 +111,7 @@
         //opening: this node is the functional air intake.
         //water at or above this point floods the engine.
         {"engineGroup":["engine_intake"]},
-        ["snh", -0.98, -0.58, 2.30],
+        ["snh", -0.98, -0.58, 2.45],
         {"engineGroup":""},
         {"group":""},
     ],
@@ -176,7 +176,7 @@
     "slotType" : "pickup_snorkel_tube",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
-        ["snorkel_tall", ["pickup_snorkel"]],
+        ["snorkel_tall_v3", ["pickup_snorkel"]],
     ],
     "nodes": [
         ["id", "posX", "posY", "posZ"],
