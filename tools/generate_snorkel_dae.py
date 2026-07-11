@@ -8,7 +8,7 @@ mitre-cut opening (the classic 4x4 snorkel top). The tall version continues
 as a vertical mast well above the roof line. Also adds two bracket stubs
 toward the cab.
 
-Heights: small = hood, medium = roof line, tall = ~0.65 m above the roof.
+Heights: small = mirror, medium = ~0.4 m above roof, tall = ~1.1 m above roof.
 
 Run from the repo root:  python3 tools/generate_snorkel_dae.py
 Output: vehicles/pickup/universalSnorkel/snorkel.dae
@@ -25,21 +25,26 @@ BRACKET_LEN = 0.06     # bracket stub toward the cab
 MATERIAL = "snorkel_black"
 
 # Path stations in vehicle space (x right(-)/left(+), y front(-)/rear(+), z up)
-# The tube climbs the fender, then follows the A-pillar rake; the tall
-# version continues as a vertical mast above the roof line.
-P0 = (-0.90, -1.16, 0.97)    # engine-bay end, above/behind right fender area
-P1 = (-0.99, -0.92, 1.05)    # over the fender edge, ahead of the door seam
-P2 = (-0.99, -0.86, 1.30)    # A-pillar base (bottom corner of the windshield)
-ROOF = (-0.99, -0.52, 1.88)  # A-pillar top / roof line (follows pillar rake)
-TIP_SMALL = (-0.99, -0.88, 1.30)   # hood height
-TIP_TALL = (-0.99, -0.52, 2.53)    # mast top, well above the roof
-# opening faces forward and slightly up (mitre-cut like real 4x4 snorkels)
-MITRE_N = (0.0, -0.707, 0.707)
+# The tube climbs the fender and the A-pillar rake, and always ends in a
+# short VERTICAL section before the mitre cut — a slanted final segment
+# stretches the cut ellipse into a huge blade shape (looked like a black
+# triangle in-game), a vertical one gives a clean 45-degree opening.
+P0 = (-0.90, -1.16, 0.97)      # engine-bay end, above/behind right fender area
+P1 = (-0.99, -0.92, 1.05)      # over the fender edge, ahead of the door seam
+P2 = (-0.99, -0.86, 1.30)      # A-pillar base (bottom corner of the windshield)
+PM = (-0.985, -0.73, 1.55)     # mid-pillar, following the pillar rake
+RT = (-0.98, -0.58, 1.90)      # A-pillar top / roof line
+
+TIP_SMALL = (-0.985, -0.73, 1.62)   # mirror height — classic fender snorkel
+TIP_MEDIUM = (-0.98, -0.58, 2.30)   # ~0.4 m above the roof
+TIP_TALL = (-0.98, -0.58, 3.00)     # ~1.1 m above the roof — deep wading mast
+# opening faces forward, tilted (mitre-cut like real 4x4 snorkels)
+MITRE_N = (0.0, -0.5, 0.866)
 
 PATHS = {
-    "small": [P0, P1, TIP_SMALL],
-    "medium": [P0, P1, P2, ROOF],
-    "tall": [P0, P1, P2, ROOF, TIP_TALL],
+    "small": [P0, P1, P2, (-0.985, -0.73, 1.50), TIP_SMALL],
+    "medium": [P0, P1, P2, PM, RT, TIP_MEDIUM],
+    "tall": [P0, P1, P2, PM, RT, TIP_TALL],
 }
 
 
@@ -158,7 +163,7 @@ def build_snorkel(size):
     m.add_tube(path, TUBE_R, cap_start=True, cap_end=True,
                end_cut_normal=MITRE_N, end_flare=FLARE)
     # bracket stubs toward the cab (inboard, +x direction) along the pillar run
-    pillar_a, pillar_b = path[-2], path[-1]
+    pillar_a, pillar_b = path[2], path[-2]
     for frac in (0.3, 0.8):
         base = vadd(pillar_a, vscale(vsub(pillar_b, pillar_a), frac))
         m.add_tube([base, vadd(base, (BRACKET_LEN, 0.0, 0.0))], BRACKET_R,

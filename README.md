@@ -92,8 +92,9 @@ extensions.universalSnorkel.getMode()
 1. Spawn any D-Series, open **vehicle config / parts selector** (Ctrl+W or the Vehicle
    Config menu).
 2. Find **Additional Modification → "Snorkel (Right A-Pillar)"** and select it.
-3. A **"Snorkel"** slot appears — choose **Small** (hood height), **Medium** (roof
-   line) or **Tall** (mast reaching ~0.65 m above the roof, for deep water).
+3. A **"Snorkel"** slot appears — choose **1. Small** (mirror height, the default),
+   **2. Medium** (~0.4 m above the roof) or **3. Tall** (high mast, ~1.1 m above the
+   roof for really deep water).
 4. The wading rule is physical: the air intake node sits in the ram head opening at the
    top of the tube. Water below it — engine breathes. Water at or above it — the engine
    floods and starts hydrolocking, exactly like stock deep-water behaviour.

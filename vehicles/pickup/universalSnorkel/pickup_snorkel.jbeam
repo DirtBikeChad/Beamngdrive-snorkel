@@ -8,14 +8,14 @@
     "slotType" : "pickup_mod",
     "slots": [
         ["type", "default", "description"],
-        ["pickup_snorkel_tube", "pickup_snorkel_tube_tall", "Snorkel"],
+        ["pickup_snorkel_tube", "pickup_snorkel_tube_small", "Snorkel"],
     ],
 },
 
 "pickup_snorkel_tube_small": {
     "information":{
         "authors":"DirtBikeChad",
-        "name":"Small Snorkel (hood height)",
+        "name":"1. Small Snorkel (mirror height)",
         "value":180,
     },
     "slotType" : "pickup_snorkel_tube",
@@ -33,79 +33,11 @@
         {"nodeWeight":2.0},
         ["snb", -0.90, -1.16, 0.97],
         ["snf", -0.99, -0.92, 1.05],
-        //opening: this node is the functional air intake.
-        //water at or above this point floods the engine.
-        {"nodeWeight":2.0},
-        {"engineGroup":["engine_intake"]},
-        ["snh", -0.99, -0.88, 1.30],
-        {"engineGroup":""},
-        {"group":""},
-    ],
-    "beams": [
-        ["id1:", "id2:"],
-        {"beamPrecompression":1, "beamType":"|NORMAL"},
-        //--tube structure--
-        //spring/damp deliberately moderate: too-stiff beams on light nodes
-        //go numerically unstable and break the part on spawn
-        {"beamSpring":351000,"beamDamp":120},
-        {"beamDeform":30000,"beamStrength":80000},
-        ["snb","snf"],
-        ["snf","snh"],
-        ["snb","snh"],
-        //--attachment to the engine block--
-        //optional: silently skipped on engines without the standard e1..e4 nodes
-        {"beamSpring":251000,"beamDamp":100},
-        {"beamDeform":25000,"beamStrength":60000},
-        {"breakGroup":"pickup_snorkel_break"},
-        {"optional":true},
-        ["snb","e1r"],
-        ["snb","e2r"],
-        ["snb","e3r"],
-        ["snb","e4r"],
-        ["snb","e3l"],
-        ["snf","e1r"],
-        ["snf","e2r"],
-        ["snf","e3r"],
-        ["snf","e4r"],
-        ["snf","e1l"],
-        ["snh","e1r"],
-        ["snh","e2r"],
-        ["snh","e3r"],
-        ["snh","e4r"],
-        ["snh","e2l"],
-        {"optional":false},
-        {"breakGroup":""},
-    ],
-},
-
-"pickup_snorkel_tube_medium": {
-    "information":{
-        "authors":"DirtBikeChad",
-        "name":"Medium Snorkel (roof line)",
-        "value":220,
-    },
-    "slotType" : "pickup_snorkel_tube",
-    "flexbodies": [
-        ["mesh", "[group]:", "nonFlexMaterials"],
-        ["snorkel_medium", ["pickup_snorkel"]],
-    ],
-    "nodes": [
-        ["id", "posX", "posY", "posZ"],
-        {"selfCollision":false},
-        {"collision":true},
-        {"frictionCoef":0.7},
-        {"nodeMaterial":"|NM_PLASTIC"},
-        {"group":"pickup_snorkel"},
-        {"nodeWeight":2.0},
-        ["snb", -0.90, -1.16, 0.97],
-        ["snf", -0.99, -0.92, 1.05],
-        {"nodeWeight":2.0},
         ["snp", -0.99, -0.86, 1.30],
         //opening: this node is the functional air intake.
         //water at or above this point floods the engine.
-        {"nodeWeight":2.0},
         {"engineGroup":["engine_intake"]},
-        ["snh", -0.99, -0.52, 1.88],
+        ["snh", -0.985, -0.73, 1.62],
         {"engineGroup":""},
         {"group":""},
     ],
@@ -124,6 +56,7 @@
         ["snf","snh"],
         ["snb","snh"],
         //--attachment to the engine block--
+        //optional: silently skipped on engines without the standard e1..e4 nodes
         {"beamSpring":251000,"beamDamp":100},
         {"beamDeform":25000,"beamStrength":60000},
         {"breakGroup":"pickup_snorkel_break"},
@@ -147,22 +80,21 @@
         ["snh","e2r"],
         ["snh","e3r"],
         ["snh","e4r"],
-        ["snh","e4l"],
         {"optional":false},
         {"breakGroup":""},
     ],
 },
 
-"pickup_snorkel_tube_tall": {
+"pickup_snorkel_tube_medium": {
     "information":{
         "authors":"DirtBikeChad",
-        "name":"Tall Snorkel (mast, above roof)",
-        "value":260,
+        "name":"2. Medium Snorkel (above roof)",
+        "value":220,
     },
     "slotType" : "pickup_snorkel_tube",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
-        ["snorkel_tall", ["pickup_snorkel"]],
+        ["snorkel_medium", ["pickup_snorkel"]],
     ],
     "nodes": [
         ["id", "posX", "posY", "posZ"],
@@ -174,21 +106,19 @@
         {"nodeWeight":2.0},
         ["snb", -0.90, -1.16, 0.97],
         ["snf", -0.99, -0.92, 1.05],
-        {"nodeWeight":2.0},
         ["snp", -0.99, -0.86, 1.30],
-        ["snr", -0.99, -0.52, 1.88],
+        ["snr", -0.98, -0.58, 1.90],
         //opening: this node is the functional air intake.
         //water at or above this point floods the engine.
-        {"nodeWeight":2.0},
         {"engineGroup":["engine_intake"]},
-        ["snh", -0.99, -0.52, 2.53],
+        ["snh", -0.98, -0.58, 2.30],
         {"engineGroup":""},
         {"group":""},
     ],
     "beams": [
         ["id1:", "id2:"],
         {"beamPrecompression":1, "beamType":"|NORMAL"},
-        //--tube structure (fully triangulated, mast braced twice)--
+        //--tube structure (fully triangulated)--
         //spring/damp deliberately moderate: too-stiff beams on light nodes
         //go numerically unstable and break the part on spawn
         {"beamSpring":351000,"beamDamp":120},
@@ -228,6 +158,98 @@
         ["snr","e3r"],
         ["snr","e4r"],
         ["snr","e4l"],
+        ["snh","e1r"],
+        ["snh","e2r"],
+        ["snh","e3r"],
+        ["snh","e4r"],
+        {"optional":false},
+        {"breakGroup":""},
+    ],
+},
+
+"pickup_snorkel_tube_tall": {
+    "information":{
+        "authors":"DirtBikeChad",
+        "name":"3. Tall Snorkel (high mast)",
+        "value":260,
+    },
+    "slotType" : "pickup_snorkel_tube",
+    "flexbodies": [
+        ["mesh", "[group]:", "nonFlexMaterials"],
+        ["snorkel_tall", ["pickup_snorkel"]],
+    ],
+    "nodes": [
+        ["id", "posX", "posY", "posZ"],
+        {"selfCollision":false},
+        {"collision":true},
+        {"frictionCoef":0.7},
+        {"nodeMaterial":"|NM_PLASTIC"},
+        {"group":"pickup_snorkel"},
+        {"nodeWeight":2.0},
+        ["snb", -0.90, -1.16, 0.97],
+        ["snf", -0.99, -0.92, 1.05],
+        ["snp", -0.99, -0.86, 1.30],
+        ["snr", -0.98, -0.58, 1.90],
+        ["snm", -0.98, -0.58, 2.45],
+        //opening: this node is the functional air intake.
+        //water at or above this point floods the engine.
+        {"engineGroup":["engine_intake"]},
+        ["snh", -0.98, -0.58, 3.00],
+        {"engineGroup":""},
+        {"group":""},
+    ],
+    "beams": [
+        ["id1:", "id2:"],
+        {"beamPrecompression":1, "beamType":"|NORMAL"},
+        //--tube structure (fully triangulated, mast braced twice)--
+        //spring/damp deliberately moderate: too-stiff beams on light nodes
+        //go numerically unstable and break the part on spawn
+        {"beamSpring":351000,"beamDamp":120},
+        {"beamDeform":30000,"beamStrength":80000},
+        ["snb","snf"],
+        ["snf","snp"],
+        ["snp","snr"],
+        ["snr","snm"],
+        ["snm","snh"],
+        ["snb","snp"],
+        ["snf","snr"],
+        ["snp","snm"],
+        ["snr","snh"],
+        ["snb","snr"],
+        ["snf","snm"],
+        ["snp","snh"],
+        ["snb","snh"],
+        ["snf","snh"],
+        ["snb","snm"],
+        //--attachment to the engine block--
+        {"beamSpring":251000,"beamDamp":100},
+        {"beamDeform":25000,"beamStrength":60000},
+        {"breakGroup":"pickup_snorkel_break"},
+        {"optional":true},
+        ["snb","e1r"],
+        ["snb","e2r"],
+        ["snb","e3r"],
+        ["snb","e4r"],
+        ["snb","e3l"],
+        ["snf","e1r"],
+        ["snf","e2r"],
+        ["snf","e3r"],
+        ["snf","e4r"],
+        ["snf","e1l"],
+        ["snp","e1r"],
+        ["snp","e2r"],
+        ["snp","e3r"],
+        ["snp","e4r"],
+        ["snp","e2l"],
+        ["snr","e1r"],
+        ["snr","e2r"],
+        ["snr","e3r"],
+        ["snr","e4r"],
+        ["snr","e4l"],
+        ["snm","e1r"],
+        ["snm","e2r"],
+        ["snm","e3r"],
+        ["snm","e4r"],
         ["snh","e1r"],
         ["snh","e2r"],
         ["snh","e3r"],
