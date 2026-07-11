@@ -17,14 +17,17 @@ local logTag = "universalSnorkel"
 local settingsPath = "settings/universalSnorkel.json"
 
 local state = {
-  mode = "high" -- default: roof-level snorkel on every vehicle
+  mode = "tall" -- default: roof-height snorkel on every vehicle
 }
 
+local VALID_MODES = {off = true, small = true, medium = true, tall = true, max = true}
+
 local function sanitizeMode(mode)
-  if mode == "off" or mode == "high" or mode == "max" then
+  if mode == "high" then return "tall" end -- pre-1.1 name
+  if VALID_MODES[mode] then
     return mode
   end
-  return "high"
+  return "tall"
 end
 
 local function loadSettings()
@@ -77,7 +80,8 @@ end
 
 -- Called from the vehicle-side extension when the player cycles the mode,
 -- and usable from the console, e.g.:
---   extensions.universalSnorkel.setGlobalMode("max")
+--   extensions.universalSnorkel.setGlobalMode("tall")
+-- Valid modes: "off", "small", "medium", "tall", "max"
 local function setGlobalMode(newMode)
   state.mode = sanitizeMode(newMode)
   saveSettings()

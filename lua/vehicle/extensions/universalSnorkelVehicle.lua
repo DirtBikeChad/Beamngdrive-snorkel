@@ -9,14 +9,18 @@
 --   The flooding state is accumulated frame by frame in the combustion engine
 --   powertrain device (vehicle Lua VM). This extension prevents that
 --   accumulator from ever reaching the hydrolock threshold while the virtual
---   snorkel is above the waterline.
+--   snorkel opening is above the waterline.
 --
 -- Modes:
---   off  — stock behaviour, engine floods as usual
---   high — virtual snorkel at the vehicle's highest point (roof-level).
---          The engine keeps running as long as the highest node of the
---          vehicle is above water. Sink deeper and it floods like stock.
---   max  — intake is fully waterproof, engine never hydrolocks.
+--   off    — stock behaviour, engine floods as usual
+--   small  — snorkel opening at ~hood height (55% of the vehicle's height)
+--   medium — snorkel opening at ~mirror height (75% of the vehicle's height)
+--   tall   — snorkel opening at the vehicle's highest point (roof line)
+--   max    — intake is fully waterproof, engine never hydrolocks
+--
+-- In small/medium/tall the engine keeps running while the water is below the
+-- snorkel opening; once the water reaches or passes it, vanilla flooding
+-- takes over and the engine starts hydrolocking exactly like stock.
 --
 -- The mode is global for all vehicles and is coordinated by the GE-side
 -- extension (lua/ge/extensions/universalSnorkel.lua).
@@ -24,20 +28,25 @@
 local M = {}
 
 local huge = math.huge
+local abs = math.abs
 
-local MODE_ORDER = {"off", "high", "max"}
-local VALID_MODES = {off = true, high = true, max = true}
+local MODE_ORDER = {"off", "small", "medium", "tall", "max"}
+local VALID_MODES = {off = true, small = true, medium = true, tall = true, max = true}
 local MODE_LABELS = {
   off = "OFF — stock air intake",
-  high = "HIGH — roof-level snorkel",
+  small = "SMALL — hood-height snorkel",
+  medium = "MEDIUM — mirror-height snorkel",
+  tall = "TALL — roof-height snorkel",
   max = "MAX — fully waterproof intake"
 }
+-- snorkel opening height as a fraction of the vehicle's total height
+local MODE_HEIGHT_FRACTION = {small = 0.55, medium = 0.75, tall = 1.0}
 
 local logTag = "universalSnorkelVehicle"
 
 local mode = "off" -- real mode is pushed in by the GE extension right after load
 local engines = {} -- { {device = <table>, floodKeys = {"floodLevel", ...}}, ... }
-local tipNodeCid = nil -- highest node of the vehicle = virtual snorkel opening
+local sensorCids = {} -- mode -> node cid used as the snorkel opening
 local snorkelUnderwater = false
 local warnedNoFloodField = false
 local rescanTimer = 0
@@ -111,23 +120,41 @@ local function scanEngines()
   end
 end
 
--- The virtual snorkel opening: the highest node of the vehicle in jbeam
--- (design) space, i.e. roughly the roof line / rollcage top.
-local function findTipNode()
-  tipNodeCid = nil
+-- Pick one sensor node per snorkel height: the node whose design-space Z is
+-- closest to the target height (bottom + fraction * vehicle height). For
+-- "tall" this is simply the highest node of the vehicle (roof / rollcage).
+local function findSensorNodes()
+  sensorCids = {}
   local ok, err = pcall(function()
     if not (v and v.data and v.data.nodes) then return end
-    local bestZ = -huge
-    for cid, node in pairs(v.data.nodes) do
+    local minZ, maxZ = huge, -huge
+    for _, node in pairs(v.data.nodes) do
       local p = node.pos
-      if p and type(p.z) == "number" and p.z > bestZ then
-        bestZ = p.z
-        tipNodeCid = node.cid or cid
+      if p and type(p.z) == "number" then
+        if p.z < minZ then minZ = p.z end
+        if p.z > maxZ then maxZ = p.z end
       end
+    end
+    if maxZ <= minZ then return end
+
+    for modeName, fraction in pairs(MODE_HEIGHT_FRACTION) do
+      local targetZ = minZ + fraction * (maxZ - minZ)
+      local bestCid, bestDist = nil, huge
+      for cid, node in pairs(v.data.nodes) do
+        local p = node.pos
+        if p and type(p.z) == "number" then
+          local dist = abs(p.z - targetZ)
+          if dist < bestDist then
+            bestDist = dist
+            bestCid = node.cid or cid
+          end
+        end
+      end
+      sensorCids[modeName] = bestCid
     end
   end)
   if not ok then
-    log("W", logTag, "Failed to find snorkel tip node: " .. tostring(err))
+    log("W", logTag, "Failed to find snorkel sensor nodes: " .. tostring(err))
   end
 end
 
@@ -137,6 +164,7 @@ end
 -- for broadcasts, so the message is only shown once, on the vehicle that
 -- triggered the change).
 local function setMode(newMode, silent)
+  if newMode == "high" then newMode = "tall" end -- pre-1.1 name
   if not VALID_MODES[newMode] then return end
   local changed = newMode ~= mode
   mode = newMode
@@ -192,13 +220,14 @@ local function updateGFX(dt)
   end
 
   local protecting = true
-  if mode == "high" and tipNodeCid then
-    local underwater = obj:inWater(tipNodeCid) and true or false
+  local sensorCid = sensorCids[mode]
+  if sensorCid then -- small / medium / tall: check the snorkel opening
+    local underwater = obj:inWater(sensorCid) and true or false
     if underwater ~= snorkelUnderwater then
       snorkelUnderwater = underwater
       if guihooks then
         if underwater then
-          guihooks.message("Snorkel submerged — engine can flood!", 5, "vehicle.damage.flood")
+          guihooks.message("Snorkel submerged — engine is flooding!", 5, "vehicle.damage.flood")
         else
           guihooks.message("Snorkel above water — engine protected", 5, "vehicle.damage.flood")
         end
@@ -227,9 +256,10 @@ end
 
 local function onExtensionLoaded()
   scanEngines()
-  findTipNode()
-  log("I", logTag, string.format("Universal Snorkel active on this vehicle — %d engine(s), tip node cid: %s",
-    #engines, tostring(tipNodeCid)))
+  findSensorNodes()
+  log("I", logTag, string.format(
+    "Universal Snorkel active on this vehicle — %d engine(s), sensors: small=%s medium=%s tall=%s",
+    #engines, tostring(sensorCids.small), tostring(sensorCids.medium), tostring(sensorCids.tall)))
 end
 
 local function onReset()

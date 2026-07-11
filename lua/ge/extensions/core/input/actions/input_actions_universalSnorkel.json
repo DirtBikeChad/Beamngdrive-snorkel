@@ -5,6 +5,6 @@
     "ctx": "vlua",
     "onDown": "if extensions.universalSnorkelVehicle then extensions.universalSnorkelVehicle.cycleMode() end",
     "title": "Cycle snorkel mode",
-    "desc": "Universal Snorkel: cycle between Off, High (roof-level snorkel) and Max (fully waterproof intake). Applies to every vehicle."
+    "desc": "Universal Snorkel: cycle Off / Small (hood) / Medium (mirror) / Tall (roof) / Max (fully waterproof). Applies to every vehicle."
   }
 }

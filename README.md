@@ -11,14 +11,27 @@ only works on **one specific vehicle**, because they are jbeam parts that need a
 that vehicle. This mod works differently (via Lua, see [How it works](#how-it-works)) so it
 applies to **all** vehicles at once — including any mod vehicles you have installed.
 
+The mod has two parts that work together:
+
+1. **The universal system (every car)** — Lua-based, gives any vehicle a virtual snorkel
+   in three heights, toggled with one keybind.
+2. **A real, visible snorkel for the Gavril D-Series** — shows up in the vehicle config
+   parts selector as **"Snorkel"** with **Small / Medium / Tall** tubes, has an actual 3D
+   tube + ram head on the right A-pillar, can be ripped off in crashes, and floods the
+   engine exactly when the water reaches the ram head opening.
+
 ## Features
 
-- **Three snorkel modes**, cycled with a single keybind, applied to every spawned vehicle:
+- **Five snorkel modes**, cycled with a single keybind, applied to every spawned vehicle:
   - **OFF** — stock behaviour: drive into deep water and the engine floods and hydrolocks.
-  - **HIGH** — a virtual roof-level snorkel. Your engine keeps breathing as long as the
-    *highest point of the vehicle* is above the waterline. Sink past the roof and it
-    floods just like stock. This is the realistic "high snorkel" mode.
+  - **SMALL** — snorkel opening at ~hood height (55% of the vehicle's height).
+  - **MEDIUM** — snorkel opening at ~mirror height (75% of the vehicle's height).
+  - **TALL** — snorkel opening at the vehicle's highest point (roof line).
   - **MAX** — fully waterproof intake. The engine never hydrolocks, even fully submerged.
+
+  In SMALL/MEDIUM/TALL the rule is exactly what you'd expect from a real snorkel: **water
+  below the opening → engine runs fine; water at or above the opening → the engine starts
+  flooding and will hydrolock just like stock.**
 - **UI feedback** — on-screen messages when you change mode, when the snorkel goes under,
   and when it surfaces again.
 - **Remembers your setting** — the chosen mode is saved to your user folder and restored
@@ -49,19 +62,40 @@ Copy the `lua/` and `scripts/` folders into
 
 ## Usage
 
+### Universal system (any car)
+
 1. **Bind the key:** Options → Controls → Vehicle → **"Cycle snorkel mode"** → bind it to
    anything you like (it ships unbound so it can't conflict with your existing bindings).
-2. Press the key to cycle **OFF → HIGH → MAX → OFF…**. A message shows the active mode.
+2. Press the key to cycle **OFF → SMALL → MEDIUM → TALL → MAX → OFF…**. A message shows
+   the active mode.
 3. Drive into the water.
 
-Default mode on first install is **HIGH**.
+Default mode on first install is **TALL**.
 
 You can also set the mode from the console (`~` key, make sure "GE-Lua" is selected):
 
 ```lua
-extensions.universalSnorkel.setGlobalMode("max")   -- "off" | "high" | "max"
+extensions.universalSnorkel.setGlobalMode("medium")  -- "off"|"small"|"medium"|"tall"|"max"
 extensions.universalSnorkel.getMode()
 ```
+
+### Visible snorkel (Gavril D-Series)
+
+1. Spawn any D-Series, open **vehicle config / parts selector** (Ctrl+W or the Vehicle
+   Config menu).
+2. Find **Additional Modification → "Snorkel (Right A-Pillar)"** and select it.
+3. A **"Snorkel"** slot appears — choose **Small** (hood height), **Medium** (mirror
+   height) or **Tall** (roof height).
+4. The wading rule is physical: the air intake node sits in the ram head opening at the
+   top of the tube. Water below it — engine breathes. Water at or above it — the engine
+   floods and starts hydrolocking, exactly like stock deep-water behaviour.
+
+Tip: when driving the D-Series with the visible snorkel, set the universal system to
+**OFF** so the wading depth is governed purely by the part you fitted — otherwise the
+universal system (if set higher) also protects the engine.
+
+The part is anchored to the engine block with breakable attachment beams, so a rollover
+or a tree strike can tear the snorkel off — after that, deep water is your enemy again.
 
 ## How it works
 
@@ -105,8 +139,10 @@ for BeamNG mods.
   official documentation and several actively maintained open-source mods). This mod has
   **not** been run in-game by its author yet — if something misbehaves, check the console
   (`~`) for `universalSnorkel` log lines and please open an issue with them.
-- It does not add a visible snorkel mesh (that requires per-vehicle 3D models). It changes
-  the *functional* wading depth only.
+- The universal system changes the *functional* wading depth only (no mesh — that's
+  per-vehicle by nature). The visible snorkel with the 3D tube currently exists for the
+  Gavril D-Series; other vehicles can be added the same way (see
+  [`docs/VISIBLE_SNORKEL_JBEAM_GUIDE.md`](docs/VISIBLE_SNORKEL_JBEAM_GUIDE.md)).
 - Exhaust, electrics and drivetrain are unaffected — in BeamNG only the intake
   (`engine_intake` group) causes water damage, and water actually helps cool the block.
 - Works in singleplayer; on BeamMP it affects your own vehicles client-side.
@@ -120,9 +156,18 @@ lua/ge/extensions/universalSnorkel.lua                     GE-side coordinator
 lua/ge/extensions/core/input/actions/input_actions_universalSnorkel.json   keybind action
 lua/vehicle/extensions/universalSnorkelVehicle.lua         per-vehicle protection logic
 scripts/universalSnorkel/modScript.lua                     mod bootstrap
+vehicles/pickup/universalSnorkel/pickup_snorkel.jbeam      D-Series visible snorkel parts
+vehicles/pickup/universalSnorkel/snorkel.dae               3D meshes (small/medium/tall)
+vehicles/pickup/universalSnorkel/main.materials.json       snorkel material
+tools/generate_snorkel_dae.py                              mesh generator (edit + re-run)
 docs/                                                      research + technical docs
 build.sh / build.bat                                       zip packagers
 ```
+
+The visible part placement was derived from real D-Series-class dimensions; if the tube
+sits slightly off your cab, all coordinates live in plain text — tweak the `P0…TIP_TALL`
+constants in `tools/generate_snorkel_dae.py`, re-run it, and mirror the same numbers in
+`pickup_snorkel.jbeam` (the `snb/snk/snp/snt/snh` node lines).
 
 ## License
 
