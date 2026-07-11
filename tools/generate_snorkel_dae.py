@@ -51,7 +51,7 @@ PATHS = {
 
 # bumped whenever mesh/node layout changes: new object names force BeamNG to
 # rebuild its mesh/binding cache instead of pairing new meshes with stale data
-OBJ_SUFFIX = "_v3"
+OBJ_SUFFIX = "_v4"
 
 
 def vsub(a, b):
@@ -267,7 +267,7 @@ def main():
 </COLLADA>
 """
     out = os.path.join(os.path.dirname(__file__), "..",
-                       "vehicles", "pickup", "universalSnorkel", "snorkel_v3.dae")
+                       "vehicles", "pickup", "universalSnorkel", "snorkel_v4.dae")
     out = os.path.normpath(out)
     os.makedirs(os.path.dirname(out), exist_ok=True)
     with open(out, "w") as f:

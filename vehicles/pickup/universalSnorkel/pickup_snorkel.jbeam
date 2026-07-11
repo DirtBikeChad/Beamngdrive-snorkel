@@ -21,7 +21,7 @@
     "slotType" : "pickup_snorkel_tube",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
-        ["snorkel_small_v3", ["pickup_snorkel"]],
+        ["snorkel_small_v4", ["pickup_snorkel"]],
     ],
     "nodes": [
         ["id", "posX", "posY", "posZ"],
@@ -34,6 +34,7 @@
         ["snb", -0.90, -1.16, 0.97],
         ["snf", -0.99, -0.92, 1.05],
         ["snp", -0.99, -0.86, 1.30],
+        ["snr", -0.98, -0.58, 1.90],
         //opening: this node is the functional air intake.
         //water at or above this point floods the engine.
         {"engineGroup":["engine_intake"]},
@@ -51,8 +52,12 @@
         {"beamDeform":30000,"beamStrength":80000},
         ["snb","snf"],
         ["snf","snp"],
-        ["snp","snh"],
+        ["snp","snr"],
+        ["snr","snh"],
         ["snb","snp"],
+        ["snf","snr"],
+        ["snp","snh"],
+        ["snb","snr"],
         ["snf","snh"],
         ["snb","snh"],
         //--attachment to the engine block--
@@ -76,6 +81,11 @@
         ["snp","e3r"],
         ["snp","e4r"],
         ["snp","e2l"],
+        ["snr","e1r"],
+        ["snr","e2r"],
+        ["snr","e3r"],
+        ["snr","e4r"],
+        ["snr","e4l"],
         ["snh","e1r"],
         ["snh","e2r"],
         ["snh","e3r"],
@@ -94,7 +104,7 @@
     "slotType" : "pickup_snorkel_tube",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
-        ["snorkel_medium_v3", ["pickup_snorkel"]],
+        ["snorkel_medium_v4", ["pickup_snorkel"]],
     ],
     "nodes": [
         ["id", "posX", "posY", "posZ"],
@@ -176,7 +186,7 @@
     "slotType" : "pickup_snorkel_tube",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
-        ["snorkel_tall_v3", ["pickup_snorkel"]],
+        ["snorkel_tall_v4", ["pickup_snorkel"]],
     ],
     "nodes": [
         ["id", "posX", "posY", "posZ"],
