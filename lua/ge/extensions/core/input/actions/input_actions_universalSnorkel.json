@@ -1,0 +1,10 @@
+{
+  "universalSnorkelCycle": {
+    "cat": "vehicle",
+    "order": 450,
+    "ctx": "vlua",
+    "onDown": "if extensions.universalSnorkelVehicle then extensions.universalSnorkelVehicle.cycleMode() end",
+    "title": "Cycle snorkel mode",
+    "desc": "Universal Snorkel: cycle between Off, High (roof-level snorkel) and Max (fully waterproof intake). Applies to every vehicle."
+  }
+}
