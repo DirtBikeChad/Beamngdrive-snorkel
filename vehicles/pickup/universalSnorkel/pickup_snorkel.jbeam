@@ -30,12 +30,12 @@
         {"frictionCoef":0.7},
         {"nodeMaterial":"|NM_PLASTIC"},
         {"group":"pickup_snorkel"},
-        {"nodeWeight":1.4},
+        {"nodeWeight":2.0},
         ["snb", -0.90, -1.16, 0.97],
         ["snf", -0.99, -0.92, 1.05],
         //opening: this node is the functional air intake.
         //water at or above this point floods the engine.
-        {"nodeWeight":1.0},
+        {"nodeWeight":2.0},
         {"engineGroup":["engine_intake"]},
         ["snh", -0.99, -0.88, 1.30],
         {"engineGroup":""},
@@ -43,18 +43,19 @@
     ],
     "beams": [
         ["id1:", "id2:"],
-        {"beamPrecompression":1, "beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
-        //--tube structure (rigid triangle)--
-        {"beamSpring":1301000,"beamDamp":300},
-        {"beamDeform":40000,"beamStrength":90000},
+        {"beamPrecompression":1, "beamType":"|NORMAL"},
+        //--tube structure--
+        //spring/damp deliberately moderate: too-stiff beams on light nodes
+        //go numerically unstable and break the part on spawn
+        {"beamSpring":351000,"beamDamp":120},
+        {"beamDeform":30000,"beamStrength":80000},
         ["snb","snf"],
         ["snf","snh"],
         ["snb","snh"],
-        //--attachment: rigid lock to the engine block so the tube cannot
-        //resonate on its own (temporary until cab-node anchoring lands)--
+        //--attachment to the engine block--
         //optional: silently skipped on engines without the standard e1..e4 nodes
-        {"beamSpring":2601000,"beamDamp":400},
-        {"beamDeform":60000,"beamStrength":130000},
+        {"beamSpring":251000,"beamDamp":100},
+        {"beamDeform":25000,"beamStrength":60000},
         {"breakGroup":"pickup_snorkel_break"},
         {"optional":true},
         ["snb","e1r"],
@@ -95,14 +96,14 @@
         {"frictionCoef":0.7},
         {"nodeMaterial":"|NM_PLASTIC"},
         {"group":"pickup_snorkel"},
-        {"nodeWeight":1.4},
+        {"nodeWeight":2.0},
         ["snb", -0.90, -1.16, 0.97],
         ["snf", -0.99, -0.92, 1.05],
-        {"nodeWeight":1.1},
+        {"nodeWeight":2.0},
         ["snp", -0.99, -0.86, 1.30],
         //opening: this node is the functional air intake.
         //water at or above this point floods the engine.
-        {"nodeWeight":0.9},
+        {"nodeWeight":2.0},
         {"engineGroup":["engine_intake"]},
         ["snh", -0.99, -0.52, 1.88],
         {"engineGroup":""},
@@ -110,20 +111,21 @@
     ],
     "beams": [
         ["id1:", "id2:"],
-        {"beamPrecompression":1, "beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+        {"beamPrecompression":1, "beamType":"|NORMAL"},
         //--tube structure (fully triangulated)--
-        {"beamSpring":1301000,"beamDamp":300},
-        {"beamDeform":40000,"beamStrength":90000},
+        //spring/damp deliberately moderate: too-stiff beams on light nodes
+        //go numerically unstable and break the part on spawn
+        {"beamSpring":351000,"beamDamp":120},
+        {"beamDeform":30000,"beamStrength":80000},
         ["snb","snf"],
         ["snf","snp"],
         ["snp","snh"],
         ["snb","snp"],
         ["snf","snh"],
         ["snb","snh"],
-        //--attachment: rigid lock to the engine block so the tube cannot
-        //resonate on its own (temporary until cab-node anchoring lands)--
-        {"beamSpring":2601000,"beamDamp":400},
-        {"beamDeform":60000,"beamStrength":130000},
+        //--attachment to the engine block--
+        {"beamSpring":251000,"beamDamp":100},
+        {"beamDeform":25000,"beamStrength":60000},
         {"breakGroup":"pickup_snorkel_break"},
         {"optional":true},
         ["snb","e1r"],
@@ -169,15 +171,15 @@
         {"frictionCoef":0.7},
         {"nodeMaterial":"|NM_PLASTIC"},
         {"group":"pickup_snorkel"},
-        {"nodeWeight":1.4},
+        {"nodeWeight":2.0},
         ["snb", -0.90, -1.16, 0.97],
         ["snf", -0.99, -0.92, 1.05],
-        {"nodeWeight":1.1},
+        {"nodeWeight":2.0},
         ["snp", -0.99, -0.86, 1.30],
         ["snr", -0.99, -0.52, 1.88],
         //opening: this node is the functional air intake.
         //water at or above this point floods the engine.
-        {"nodeWeight":0.8},
+        {"nodeWeight":2.0},
         {"engineGroup":["engine_intake"]},
         ["snh", -0.99, -0.52, 2.53],
         {"engineGroup":""},
@@ -185,10 +187,12 @@
     ],
     "beams": [
         ["id1:", "id2:"],
-        {"beamPrecompression":1, "beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+        {"beamPrecompression":1, "beamType":"|NORMAL"},
         //--tube structure (fully triangulated, mast braced twice)--
-        {"beamSpring":1301000,"beamDamp":300},
-        {"beamDeform":40000,"beamStrength":90000},
+        //spring/damp deliberately moderate: too-stiff beams on light nodes
+        //go numerically unstable and break the part on spawn
+        {"beamSpring":351000,"beamDamp":120},
+        {"beamDeform":30000,"beamStrength":80000},
         ["snb","snf"],
         ["snf","snp"],
         ["snp","snr"],
@@ -199,10 +203,9 @@
         ["snb","snr"],
         ["snf","snh"],
         ["snb","snh"],
-        //--attachment: rigid lock to the engine block so the tube cannot
-        //resonate on its own (temporary until cab-node anchoring lands)--
-        {"beamSpring":2601000,"beamDamp":400},
-        {"beamDeform":60000,"beamStrength":130000},
+        //--attachment to the engine block--
+        {"beamSpring":251000,"beamDamp":100},
+        {"beamDeform":25000,"beamStrength":60000},
         {"breakGroup":"pickup_snorkel_break"},
         {"optional":true},
         ["snb","e1r"],
