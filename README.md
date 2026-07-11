@@ -33,7 +33,9 @@ applies to **all** vehicles at once — including any mod vehicles you have inst
 
 **Option A — packaged zip (recommended)**
 
-1. Download `UniversalSnorkel.zip` from this repository (or build it, see below).
+1. Build `UniversalSnorkel.zip` with one command (see [Building the zip](#building-the-zip)
+   below) — or simply select the `lua` and `scripts` folders and compress them into a zip
+   yourself (they must sit at the top level of the zip).
 2. Drop it into your BeamNG mods folder:
    - Windows: `%LocalAppData%\BeamNG.drive\<version>\mods\` (or open it in-game via
      *Repository → Open mods folder*)
