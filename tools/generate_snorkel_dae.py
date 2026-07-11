@@ -8,7 +8,7 @@ mitre-cut opening (the classic 4x4 snorkel top). The tall version continues
 as a vertical mast well above the roof line. Also adds two bracket stubs
 toward the cab.
 
-Heights: small = roof, medium = ~0.8 m above roof, tall = ~1.5 m above roof.
+Heights: small = roof, medium = 3 m (~1.1 m above roof), tall = 5 m mast.
 
 Run from the repo root:  python3 tools/generate_snorkel_dae.py
 Output: vehicles/pickup/universalSnorkel/snorkel.dae
@@ -36,22 +36,27 @@ PM = (-0.985, -0.73, 1.55)     # mid-pillar, following the pillar rake
 RT = (-0.98, -0.58, 1.90)      # A-pillar top / roof line
 
 TIP_SMALL = (-0.98, -0.58, 2.00)    # roof height
-TIP_MEDIUM = (-0.98, -0.58, 2.70)   # ~0.8 m above the roof
-TIP_TALL = (-0.98, -0.58, 3.40)     # ~1.5 m above the roof — deep wading mast
+TIP_MEDIUM = (-0.98, -0.58, 3.00)   # ~1.1 m above the roof
+TIP_TALL = (-0.98, -0.58, 5.00)     # ~3.1 m above the roof — extreme wading mast
+
+def mast(zs):
+    return [(-0.98, -0.58, z) for z in zs]
 # opening faces forward, tilted (mitre-cut like real 4x4 snorkels)
 MITRE_N = (0.0, -0.5, 0.866)
 
 # every size shares the same fender/pillar run and ends in a vertical mast,
 # so all three get the identical clean mitre opening
+# mast ring stations sit at the same heights as the jbeam brace nodes so the
+# flexbody binding always finds a well-spread node cluster near every vertex
 PATHS = {
     "small": [P0, P1, P2, PM, RT, TIP_SMALL],
-    "medium": [P0, P1, P2, PM, RT, TIP_MEDIUM],
-    "tall": [P0, P1, P2, PM, RT, TIP_TALL],
+    "medium": [P0, P1, P2, PM, RT] + mast([2.45]) + [TIP_MEDIUM],
+    "tall": [P0, P1, P2, PM, RT] + mast([2.40, 2.90, 3.40, 3.90, 4.40]) + [TIP_TALL],
 }
 
 # bumped whenever mesh/node layout changes: new object names force BeamNG to
 # rebuild its mesh/binding cache instead of pairing new meshes with stale data
-OBJ_SUFFIX = "_v6"
+OBJ_SUFFIX = "_v7"
 
 
 def vsub(a, b):
@@ -267,7 +272,7 @@ def main():
 </COLLADA>
 """
     out = os.path.join(os.path.dirname(__file__), "..",
-                       "vehicles", "pickup", "universalSnorkel", "snorkel_v6.dae")
+                       "vehicles", "pickup", "universalSnorkel", "snorkel_v7.dae")
     out = os.path.normpath(out)
     os.makedirs(os.path.dirname(out), exist_ok=True)
     with open(out, "w") as f:
