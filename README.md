@@ -51,9 +51,9 @@ The mod has two parts that work together:
 2. Drop it into your BeamNG mods folder:
    - Windows: `%LocalAppData%\BeamNG.drive\<version>\mods\` (or open it in-game via
      *Repository → Open mods folder*)
-3. Start the game (or enable the mod in the Mods menu). That's it — the mod is active
-   immediately: every vehicle spawns with the TALL virtual snorkel by default, and the
-   D-Series "Snorkel" parts are available in the vehicle config.
+3. Start the game (or enable the mod in the Mods menu). That's it — the D-Series
+   "Snorkel" parts are available in the vehicle config right away, and the universal
+   (invisible, any-car) system is ready to enable with the keybind or console.
 
 To rebuild the zip yourself, run `./build.sh` / `build.bat`, or just compress the `lua`,
 `scripts` and `vehicles` folders into a zip (they must sit at the top level of the zip).
@@ -74,7 +74,11 @@ Copy the `lua/`, `scripts/` and `vehicles/` folders into
    the active mode.
 3. Drive into the water.
 
-Default mode on first install is **TALL**.
+Default mode on first install is **OFF**, so that visible snorkel parts (like the
+D-Series ones) decide the wading depth by themselves. Turn a universal mode on when you
+want an invisible snorkel on a car that has no snorkel part. Note that an active
+universal mode stacks with a fitted snorkel part: whichever protection reaches higher
+wins, so leave the universal system OFF when you want the fitted tube to be the limit.
 
 You can also set the mode from the console (`~` key, make sure "GE-Lua" is selected):
 

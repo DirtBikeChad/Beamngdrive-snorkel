@@ -17,7 +17,10 @@ local logTag = "universalSnorkel"
 local settingsPath = "settings/universalSnorkel.json"
 
 local state = {
-  mode = "tall" -- default: roof-height snorkel on every vehicle
+  -- default OFF: visible snorkel parts (e.g. the D-Series ones) decide the
+  -- wading depth on their own; enable a universal mode via the keybind or
+  -- console when you want an invisible snorkel on any other car.
+  mode = "off"
 }
 
 local VALID_MODES = {off = true, small = true, medium = true, tall = true, max = true}
@@ -27,7 +30,7 @@ local function sanitizeMode(mode)
   if VALID_MODES[mode] then
     return mode
   end
-  return "tall"
+  return "off"
 end
 
 local function loadSettings()
