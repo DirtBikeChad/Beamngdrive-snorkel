@@ -21,7 +21,7 @@
     "slotType" : "pickup_snorkel_tube",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
-        ["snorkel_small_v5", ["pickup_snorkel"]],
+        ["snorkel_small_v6", ["pickup_snorkel"]],
     ],
     "nodes": [
         ["id", "posX", "posY", "posZ"],
@@ -104,7 +104,7 @@
     "slotType" : "pickup_snorkel_tube",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
-        ["snorkel_medium_v5", ["pickup_snorkel"]],
+        ["snorkel_medium_v6", ["pickup_snorkel"]],
     ],
     "nodes": [
         ["id", "posX", "posY", "posZ"],
@@ -118,6 +118,7 @@
         ["snf", -0.99, -0.92, 1.05],
         ["snp", -0.99, -0.86, 1.30],
         ["snr", -0.98, -0.58, 1.90],
+        ["snm", -0.98, -0.58, 2.30],
         //opening: this node is the functional air intake.
         //water at or above this point floods the engine.
         {"engineGroup":["engine_intake"]},
@@ -136,13 +137,18 @@
         ["snb","snf"],
         ["snf","snp"],
         ["snp","snr"],
-        ["snr","snh"],
+        ["snr","snm"],
+        ["snm","snh"],
         ["snb","snp"],
         ["snf","snr"],
-        ["snp","snh"],
+        ["snp","snm"],
+        ["snr","snh"],
         ["snb","snr"],
-        ["snf","snh"],
+        ["snf","snm"],
+        ["snp","snh"],
         ["snb","snh"],
+        ["snf","snh"],
+        ["snb","snm"],
         //--attachment to the engine block--
         {"beamSpring":251000,"beamDamp":100},
         {"beamDeform":25000,"beamStrength":60000},
@@ -168,6 +174,10 @@
         ["snr","e3r"],
         ["snr","e4r"],
         ["snr","e4l"],
+        ["snm","e1r"],
+        ["snm","e2r"],
+        ["snm","e3r"],
+        ["snm","e4r"],
         ["snh","e1r"],
         ["snh","e2r"],
         ["snh","e3r"],
@@ -186,7 +196,7 @@
     "slotType" : "pickup_snorkel_tube",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
-        ["snorkel_tall_v5", ["pickup_snorkel"]],
+        ["snorkel_tall_v6", ["pickup_snorkel"]],
     ],
     "nodes": [
         ["id", "posX", "posY", "posZ"],
