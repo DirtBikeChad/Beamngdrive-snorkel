@@ -1,27 +1,27 @@
 {
-"pickup_snorkel_mount": {
+"roamer_snorkel_mount": {
     "information":{
         "authors":"DirtBikeChad",
         "name":"Snorkel (Right A-Pillar)",
         "value":120,
     },
-    "slotType" : "pickup_mod",
+    "slotType" : "roamer_mod",
     "slots": [
         ["type", "default", "description"],
-        ["pickup_snorkel_tube", "pickup_snorkel_tube_small", "Snorkel"],
+        ["roamer_snorkel_tube", "roamer_snorkel_tube_small", "Snorkel"],
     ],
 },
 
-"pickup_snorkel_tube_small": {
+"roamer_snorkel_tube_small": {
     "information":{
         "authors":"DirtBikeChad",
         "name":"1. Small Snorkel (roof height, 2 m)",
         "value":180,
     },
-    "slotType" : "pickup_snorkel_tube",
+    "slotType" : "roamer_snorkel_tube",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
-        ["snorkel_pickup_small_v9", ["pickup_snorkel"]],
+        ["snorkel_roamer_small_v9", ["roamer_snorkel"]],
     ],
     "nodes": [
         ["id", "posX", "posY", "posZ"],
@@ -29,7 +29,7 @@
         {"collision":true},
         {"frictionCoef":0.7},
         {"nodeMaterial":"|NM_PLASTIC"},
-        {"group":"pickup_snorkel"},
+        {"group":"roamer_snorkel"},
         {"nodeWeight":2.0},
         ["snb", -0.9, -1.16, 0.97],
         ["snf", -0.99, -0.92, 1.05],
@@ -62,7 +62,7 @@
         //optional: silently skipped on engines without the standard e1..e4 nodes
         {"beamSpring":251000,"beamDamp":100},
         {"beamDeform":25000,"beamStrength":60000},
-        {"breakGroup":"pickup_snorkel_break"},
+        {"breakGroup":"roamer_snorkel_break"},
         {"optional":true},
         ["snb","e1r"],
         ["snb","e2r"],
@@ -93,16 +93,16 @@
     ],
 },
 
-"pickup_snorkel_tube_medium": {
+"roamer_snorkel_tube_medium": {
     "information":{
         "authors":"DirtBikeChad",
         "name":"2. Medium Snorkel (3 m)",
         "value":220,
     },
-    "slotType" : "pickup_snorkel_tube",
+    "slotType" : "roamer_snorkel_tube",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
-        ["snorkel_pickup_medium_v9", ["pickup_snorkel"]],
+        ["snorkel_roamer_medium_v9", ["roamer_snorkel"]],
     ],
     "nodes": [
         ["id", "posX", "posY", "posZ"],
@@ -110,7 +110,7 @@
         {"collision":true},
         {"frictionCoef":0.7},
         {"nodeMaterial":"|NM_PLASTIC"},
-        {"group":"pickup_snorkel"},
+        {"group":"roamer_snorkel"},
         {"nodeWeight":2.0},
         ["snb", -0.9, -1.16, 0.97],
         ["snf", -0.99, -0.92, 1.05],
@@ -148,7 +148,7 @@
         //optional: silently skipped on engines without the standard e1..e4 nodes
         {"beamSpring":251000,"beamDamp":100},
         {"beamDeform":25000,"beamStrength":60000},
-        {"breakGroup":"pickup_snorkel_break"},
+        {"breakGroup":"roamer_snorkel_break"},
         {"optional":true},
         ["snb","e1r"],
         ["snb","e2r"],
@@ -183,16 +183,16 @@
     ],
 },
 
-"pickup_snorkel_tube_tall": {
+"roamer_snorkel_tube_tall": {
     "information":{
         "authors":"DirtBikeChad",
         "name":"3. Tall Snorkel (5 m mast)",
         "value":260,
     },
-    "slotType" : "pickup_snorkel_tube",
+    "slotType" : "roamer_snorkel_tube",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
-        ["snorkel_pickup_tall_v9", ["pickup_snorkel"]],
+        ["snorkel_roamer_tall_v9", ["roamer_snorkel"]],
     ],
     "nodes": [
         ["id", "posX", "posY", "posZ"],
@@ -200,7 +200,7 @@
         {"collision":true},
         {"frictionCoef":0.7},
         {"nodeMaterial":"|NM_PLASTIC"},
-        {"group":"pickup_snorkel"},
+        {"group":"roamer_snorkel"},
         {"nodeWeight":2.0},
         ["snb", -0.9, -1.16, 0.97],
         ["snf", -0.99, -0.92, 1.05],
@@ -250,7 +250,7 @@
         //optional: silently skipped on engines without the standard e1..e4 nodes
         {"beamSpring":251000,"beamDamp":100},
         {"beamDeform":25000,"beamStrength":60000},
-        {"breakGroup":"pickup_snorkel_break"},
+        {"breakGroup":"roamer_snorkel_break"},
         {"optional":true},
         ["snb","e1r"],
         ["snb","e2r"],

@@ -1,27 +1,27 @@
 {
-"pickup_snorkel_mount": {
+"van_snorkel_mount": {
     "information":{
         "authors":"DirtBikeChad",
         "name":"Snorkel (Right A-Pillar)",
         "value":120,
     },
-    "slotType" : "pickup_mod",
+    "slotType" : "van_mod",
     "slots": [
         ["type", "default", "description"],
-        ["pickup_snorkel_tube", "pickup_snorkel_tube_small", "Snorkel"],
+        ["van_snorkel_tube", "van_snorkel_tube_small", "Snorkel"],
     ],
 },
 
-"pickup_snorkel_tube_small": {
+"van_snorkel_tube_small": {
     "information":{
         "authors":"DirtBikeChad",
-        "name":"1. Small Snorkel (roof height, 2 m)",
+        "name":"1. Small Snorkel (roof height, 2.15 m)",
         "value":180,
     },
-    "slotType" : "pickup_snorkel_tube",
+    "slotType" : "van_snorkel_tube",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
-        ["snorkel_pickup_small_v9", ["pickup_snorkel"]],
+        ["snorkel_van_small_v9", ["van_snorkel"]],
     ],
     "nodes": [
         ["id", "posX", "posY", "posZ"],
@@ -29,16 +29,16 @@
         {"collision":true},
         {"frictionCoef":0.7},
         {"nodeMaterial":"|NM_PLASTIC"},
-        {"group":"pickup_snorkel"},
+        {"group":"van_snorkel"},
         {"nodeWeight":2.0},
-        ["snb", -0.9, -1.16, 0.97],
-        ["snf", -0.99, -0.92, 1.05],
-        ["snp", -0.99, -0.86, 1.3],
-        ["snr", -0.98, -0.58, 1.9],
+        ["snb", -0.86, -1.55, 0.95],
+        ["snf", -0.95, -1.4, 1.1],
+        ["snp", -0.95, -1.3, 1.45],
+        ["snr", -0.94, -1.05, 2.05],
         //opening: this node is the functional air intake.
         //water at or above this point floods the engine.
         {"engineGroup":["engine_intake"]},
-        ["snh", -0.98, -0.58, 2.0],
+        ["snh", -0.94, -1.05, 2.15],
         {"engineGroup":""},
         {"group":""},
     ],
@@ -62,7 +62,7 @@
         //optional: silently skipped on engines without the standard e1..e4 nodes
         {"beamSpring":251000,"beamDamp":100},
         {"beamDeform":25000,"beamStrength":60000},
-        {"breakGroup":"pickup_snorkel_break"},
+        {"breakGroup":"van_snorkel_break"},
         {"optional":true},
         ["snb","e1r"],
         ["snb","e2r"],
@@ -93,16 +93,16 @@
     ],
 },
 
-"pickup_snorkel_tube_medium": {
+"van_snorkel_tube_medium": {
     "information":{
         "authors":"DirtBikeChad",
         "name":"2. Medium Snorkel (3 m)",
         "value":220,
     },
-    "slotType" : "pickup_snorkel_tube",
+    "slotType" : "van_snorkel_tube",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
-        ["snorkel_pickup_medium_v9", ["pickup_snorkel"]],
+        ["snorkel_van_medium_v9", ["van_snorkel"]],
     ],
     "nodes": [
         ["id", "posX", "posY", "posZ"],
@@ -110,17 +110,17 @@
         {"collision":true},
         {"frictionCoef":0.7},
         {"nodeMaterial":"|NM_PLASTIC"},
-        {"group":"pickup_snorkel"},
+        {"group":"van_snorkel"},
         {"nodeWeight":2.0},
-        ["snb", -0.9, -1.16, 0.97],
-        ["snf", -0.99, -0.92, 1.05],
-        ["snp", -0.99, -0.86, 1.3],
-        ["snr", -0.98, -0.58, 1.9],
-        ["sn1", -0.98, -0.58, 2.4],
+        ["snb", -0.86, -1.55, 0.95],
+        ["snf", -0.95, -1.4, 1.1],
+        ["snp", -0.95, -1.3, 1.45],
+        ["snr", -0.94, -1.05, 2.05],
+        ["sn1", -0.94, -1.05, 2.5],
         //opening: this node is the functional air intake.
         //water at or above this point floods the engine.
         {"engineGroup":["engine_intake"]},
-        ["snh", -0.98, -0.58, 3.0],
+        ["snh", -0.94, -1.05, 3.0],
         {"engineGroup":""},
         {"group":""},
     ],
@@ -148,7 +148,7 @@
         //optional: silently skipped on engines without the standard e1..e4 nodes
         {"beamSpring":251000,"beamDamp":100},
         {"beamDeform":25000,"beamStrength":60000},
-        {"breakGroup":"pickup_snorkel_break"},
+        {"breakGroup":"van_snorkel_break"},
         {"optional":true},
         ["snb","e1r"],
         ["snb","e2r"],
@@ -183,16 +183,16 @@
     ],
 },
 
-"pickup_snorkel_tube_tall": {
+"van_snorkel_tube_tall": {
     "information":{
         "authors":"DirtBikeChad",
         "name":"3. Tall Snorkel (5 m mast)",
         "value":260,
     },
-    "slotType" : "pickup_snorkel_tube",
+    "slotType" : "van_snorkel_tube",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
-        ["snorkel_pickup_tall_v9", ["pickup_snorkel"]],
+        ["snorkel_van_tall_v9", ["van_snorkel"]],
     ],
     "nodes": [
         ["id", "posX", "posY", "posZ"],
@@ -200,21 +200,21 @@
         {"collision":true},
         {"frictionCoef":0.7},
         {"nodeMaterial":"|NM_PLASTIC"},
-        {"group":"pickup_snorkel"},
+        {"group":"van_snorkel"},
         {"nodeWeight":2.0},
-        ["snb", -0.9, -1.16, 0.97],
-        ["snf", -0.99, -0.92, 1.05],
-        ["snp", -0.99, -0.86, 1.3],
-        ["snr", -0.98, -0.58, 1.9],
-        ["sn1", -0.98, -0.58, 2.4],
-        ["sn2", -0.98, -0.58, 2.9],
-        ["sn3", -0.98, -0.58, 3.4],
-        ["sn4", -0.98, -0.58, 3.9],
-        ["sn5", -0.98, -0.58, 4.4],
+        ["snb", -0.86, -1.55, 0.95],
+        ["snf", -0.95, -1.4, 1.1],
+        ["snp", -0.95, -1.3, 1.45],
+        ["snr", -0.94, -1.05, 2.05],
+        ["sn1", -0.94, -1.05, 2.55],
+        ["sn2", -0.94, -1.05, 3.05],
+        ["sn3", -0.94, -1.05, 3.55],
+        ["sn4", -0.94, -1.05, 4.05],
+        ["sn5", -0.94, -1.05, 4.5],
         //opening: this node is the functional air intake.
         //water at or above this point floods the engine.
         {"engineGroup":["engine_intake"]},
-        ["snh", -0.98, -0.58, 5.0],
+        ["snh", -0.94, -1.05, 5.0],
         {"engineGroup":""},
         {"group":""},
     ],
@@ -250,7 +250,7 @@
         //optional: silently skipped on engines without the standard e1..e4 nodes
         {"beamSpring":251000,"beamDamp":100},
         {"beamDeform":25000,"beamStrength":60000},
-        {"breakGroup":"pickup_snorkel_break"},
+        {"breakGroup":"van_snorkel_break"},
         {"optional":true},
         ["snb","e1r"],
         ["snb","e2r"],

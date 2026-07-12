@@ -15,10 +15,16 @@ The mod has two parts that work together:
 
 1. **The universal system (every car)** — Lua-based, gives any vehicle a virtual snorkel
    in three heights, toggled with one keybind.
-2. **A real, visible snorkel for the Gavril D-Series** — shows up in the vehicle config
-   parts selector as **"Snorkel"** with **Small / Medium / Tall** tubes, has an actual 3D
-   tube + ram head on the right A-pillar, can be ripped off in crashes, and floods the
-   engine exactly when the water reaches the ram head opening.
+2. **Real, visible snorkels for 27 vanilla vehicles** — every one shows up in the
+   vehicle config parts selector as **"Snorkel (Right A-Pillar)"** under *Additional
+   Modification*, with **Small (2 m) / Medium (3 m) / Tall (5 m mast)** tubes on the
+   right A-pillar. They can be ripped off in crashes, and flood the engine exactly when
+   the water reaches the tube opening. Covered: D-Series, Roamer, Hopper, H-Series van,
+   Wydra, Grand Marshal, Moonhawk, Barstow, Bluebuck, Burnside, Miramar, LeGran,
+   Lansdale, Wendover, Bastion, Covet, Pessima (both), Sunburst, Vivace, ETK 800/I/K,
+   Piccolina, Bolide, SBR4 and Scintilla. Placement is screenshot-tuned on the D-Series;
+   the rest are first-pass positions — report anything that clips and it gets adjusted
+   in one line.
 
 ## Features
 
@@ -87,9 +93,9 @@ extensions.universalSnorkel.setGlobalMode("medium")  -- "off"|"small"|"medium"|"
 extensions.universalSnorkel.getMode()
 ```
 
-### Visible snorkel (Gavril D-Series)
+### Visible snorkel (27 vanilla vehicles)
 
-1. Spawn any D-Series, open **vehicle config / parts selector** (Ctrl+W or the Vehicle
+1. Spawn a supported vehicle (see the list above), open **vehicle config / parts selector** (Ctrl+W or the Vehicle
    Config menu).
 2. Find **Additional Modification → "Snorkel (Right A-Pillar)"** and select it.
 3. A **"Snorkel"** slot appears — choose **1. Small** (roof height, 2 m, the default),

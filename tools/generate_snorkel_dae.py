@@ -1,100 +1,137 @@
 #!/usr/bin/env python3
-"""Generates the snorkel meshes (snorkel.dae) for the D-Series parts.
+"""Generates the visible snorkel parts for every supported vanilla vehicle.
 
-Produces one COLLADA file containing three objects (snorkel_small,
-snorkel_medium, snorkel_tall), each a tube that runs from the engine bay,
-over the right fender and up the A-pillar, ending in a flared, forward-facing
-mitre-cut opening (the classic 4x4 snorkel top). The tall version continues
-as a vertical mast well above the roof line. Also adds two bracket stubs
-toward the cab.
+For each vehicle in VEHICLES this writes, under
+vehicles/<veh>/universalSnorkel/:
 
-Heights: small = roof, medium = 3 m (~1.1 m above roof), tall = 5 m mast.
+  * snorkel_v9.dae        - three tube meshes (small/medium/tall), objects
+                            named snorkel_<veh>_<size>_v9
+  * <veh>_snorkel.jbeam   - mount part in the vehicle's "Additional
+                            Modification" slot (<veh>_mod) + three tube parts
+  * main.materials.json   - the snorkel_black material
+
+Design rules learned the hard way (see docs/HOW_IT_WORKS.md):
+  * every tube ends in a short VERTICAL section before the mitre cut, or the
+    cut ellipse stretches into a huge blade;
+  * a physics node AND a mesh ring every ~0.5 m of mast, or the flexbody
+    binding shears the mesh into a triangle;
+  * beamSpring/beamDamp moderate relative to nodeWeight, or the part goes
+    numerically unstable and breaks itself on spawn.
+
+Heights: small = roof-ish (>= 2 m), medium >= 3 m, tall >= 5 m.
+Only the D-Series (pickup) coordinates are screenshot-verified; the other
+vehicles are first-pass estimates - tweak their entries and re-run.
 
 Run from the repo root:  python3 tools/generate_snorkel_dae.py
-Output: vehicles/pickup/universalSnorkel/snorkel.dae
 """
 
+import json
 import math
 import os
 
+VERSION = "v9"
 SEGMENTS = 24          # radial resolution of the tubes
 TUBE_R = 0.040         # main tube radius (~80 mm OD, typical safari snorkel)
 FLARE = 1.12           # slight flare of the mitre opening
 BRACKET_R = 0.014
 BRACKET_LEN = 0.06     # bracket stub toward the cab
 MATERIAL = "snorkel_black"
+MITRE_N = (0.0, -0.5, 0.866)  # opening faces forward, tilted
 
-# Path stations in vehicle space (x right(-)/left(+), y front(-)/rear(+), z up)
-# The tube climbs the fender and the A-pillar rake, and always ends in a
-# short VERTICAL section before the mitre cut — a slanted final segment
-# stretches the cut ellipse into a huge blade shape (looked like a black
-# triangle in-game), a vertical one gives a clean 45-degree opening.
-P0 = (-0.90, -1.16, 0.97)      # engine-bay end, above/behind right fender area
-P1 = (-0.99, -0.92, 1.05)      # over the fender edge, ahead of the door seam
-P2 = (-0.99, -0.86, 1.30)      # A-pillar base (bottom corner of the windshield)
-PM = (-0.985, -0.73, 1.55)     # mid-pillar, following the pillar rake
-RT = (-0.98, -0.58, 1.90)      # A-pillar top / roof line
+MAST_STEP = 0.5        # a node + mesh ring at least every ~0.5 m of mast
 
-TIP_SMALL = (-0.98, -0.58, 2.00)    # roof height
-TIP_MEDIUM = (-0.98, -0.58, 3.00)   # ~1.1 m above the roof
-TIP_TALL = (-0.98, -0.58, 5.00)     # ~3.1 m above the roof — extreme wading mast
+# Path stations per vehicle, in vehicle space (+x left / -x right side,
+# +y backward / -y forward, +z up):
+#   p0 = engine-bay end above the right fender, p1 = fender edge,
+#   p2 = A-pillar base, pm = mid-pillar, rt = A-pillar top / roof line.
+# 'pickup' is verified in-game; everything else is a first-pass estimate.
+def stations(x, y_bay, z_bay, y_fender, z_fender, y_base, z_base, y_roof, z_roof):
+    xo = x + 0.01  # pillar run sits a touch inboard, following the cab taper
+    return {
+        "p0": (x + 0.09, y_bay, z_bay),
+        "p1": (x, y_fender, z_fender),
+        "p2": (x, y_base, z_base),
+        "pm": (xo, (y_base + y_roof) / 2.0, (z_base + z_roof) / 2.0),
+        "rt": (xo, y_roof, z_roof),
+    }
 
-def mast(zs):
-    return [(-0.98, -0.58, z) for z in zs]
-# opening faces forward, tilted (mitre-cut like real 4x4 snorkels)
-MITRE_N = (0.0, -0.5, 0.866)
-
-# every size shares the same fender/pillar run and ends in a vertical mast,
-# so all three get the identical clean mitre opening
-# mast ring stations sit at the same heights as the jbeam brace nodes so the
-# flexbody binding always finds a well-spread node cluster near every vertex
-PATHS = {
-    "small": [P0, P1, P2, PM, RT, TIP_SMALL],
-    "medium": [P0, P1, P2, PM, RT] + mast([2.45]) + [TIP_MEDIUM],
-    "tall": [P0, P1, P2, PM, RT] + mast([2.40, 2.90, 3.40, 3.90, 4.40]) + [TIP_TALL],
+VEHICLES = {
+    # verified in-game
+    "pickup":    stations(-0.99, -1.16, 0.97, -0.92, 1.05, -0.86, 1.30, -0.58, 1.90),
+    # same platform as the D-Series
+    "roamer":    stations(-0.99, -1.16, 0.97, -0.92, 1.05, -0.86, 1.30, -0.58, 1.90),
+    # offroaders / utility
+    "hopper":    stations(-0.84, -0.95, 1.00, -0.78, 1.08, -0.72, 1.28, -0.48, 1.75),
+    "van":       stations(-0.95, -1.55, 0.95, -1.40, 1.10, -1.30, 1.45, -1.05, 2.05),
+    "wydra":     stations(-0.80, -1.00, 0.95, -0.85, 1.05, -0.75, 1.25, -0.50, 1.60),
+    # large sedans / classics
+    "fullsize":  stations(-0.92, -1.25, 0.88, -1.00, 0.95, -0.55, 1.05, -0.25, 1.42),
+    "moonhawk":  stations(-0.95, -1.30, 0.85, -1.05, 0.92, -0.55, 1.02, -0.25, 1.40),
+    "barstow":   stations(-0.95, -1.30, 0.85, -1.05, 0.92, -0.55, 1.02, -0.25, 1.38),
+    "bluebuck":  stations(-0.95, -1.30, 0.88, -1.05, 0.95, -0.55, 1.05, -0.25, 1.45),
+    "burnside":  stations(-0.95, -1.35, 0.95, -1.10, 1.02, -0.60, 1.12, -0.28, 1.55),
+    "miramar":   stations(-0.80, -1.10, 0.82, -0.90, 0.88, -0.50, 0.98, -0.22, 1.40),
+    "legran":    stations(-0.88, -1.20, 0.85, -0.95, 0.92, -0.52, 1.02, -0.24, 1.40),
+    "lansdale":  stations(-0.90, -1.20, 0.87, -0.95, 0.94, -0.52, 1.04, -0.24, 1.45),
+    "wendover":  stations(-0.90, -1.20, 0.86, -0.95, 0.93, -0.52, 1.03, -0.24, 1.42),
+    "bastion":   stations(-0.90, -1.25, 0.85, -1.00, 0.92, -0.55, 1.02, -0.25, 1.40),
+    # compacts / midsize
+    "covet":     stations(-0.78, -1.05, 0.78, -0.85, 0.85, -0.48, 0.95, -0.22, 1.35),
+    "pessima":   stations(-0.85, -1.15, 0.82, -0.92, 0.89, -0.50, 0.99, -0.23, 1.38),
+    "midsize":   stations(-0.85, -1.15, 0.82, -0.92, 0.89, -0.50, 0.99, -0.23, 1.38),
+    "sunburst":  stations(-0.85, -1.15, 0.82, -0.92, 0.89, -0.50, 0.99, -0.23, 1.42),
+    "vivace":    stations(-0.85, -1.15, 0.83, -0.92, 0.90, -0.50, 1.00, -0.23, 1.43),
+    "etk800":    stations(-0.87, -1.20, 0.84, -0.95, 0.91, -0.52, 1.01, -0.24, 1.42),
+    "etki":      stations(-0.87, -1.18, 0.83, -0.95, 0.90, -0.52, 1.00, -0.24, 1.40),
+    "autobello": stations(-0.72, -0.95, 0.75, -0.80, 0.82, -0.45, 0.92, -0.20, 1.35),
+    # low coupes (a snorkel on these is comedy, but it works)
+    "etkc":      stations(-0.87, -1.18, 0.80, -0.95, 0.87, -0.52, 0.95, -0.24, 1.32),
+    "bolide":    stations(-0.88, -1.10, 0.70, -0.95, 0.77, -0.55, 0.85, -0.28, 1.18),
+    "sbr":       stations(-0.88, -1.10, 0.72, -0.95, 0.79, -0.55, 0.87, -0.28, 1.20),
+    "scintilla": stations(-0.90, -1.12, 0.72, -0.98, 0.79, -0.58, 0.87, -0.30, 1.20),
 }
 
-# bumped whenever mesh/node layout changes: new object names force BeamNG to
-# rebuild its mesh/binding cache instead of pairing new meshes with stale data
-OBJ_SUFFIX = "_v8"
+
+def tip_heights(z_roof):
+    small = max(2.00, round(z_roof + 0.10, 2))
+    medium = max(3.00, round(small + 0.50, 2))
+    tall = max(5.00, round(medium + 0.50, 2))
+    return {"small": small, "medium": medium, "tall": tall}
 
 
-def vsub(a, b):
-    return (a[0] - b[0], a[1] - b[1], a[2] - b[2])
+def mast_ladder(z_roof, z_tip):
+    """Brace-node heights between the roof node and the tip, ~MAST_STEP apart."""
+    zs = []
+    z = z_roof + MAST_STEP
+    while z < z_tip - 0.45:
+        zs.append(round(z, 2))
+        z += MAST_STEP
+    if z_tip - (zs[-1] if zs else z_roof) > 0.62:
+        zs.append(round(z_tip - MAST_STEP, 2))
+    return zs
 
 
-def vadd(a, b):
-    return (a[0] + b[0], a[1] + b[1], a[2] + b[2])
+# --- mesh generation ---------------------------------------------------------
 
-
-def vscale(a, s):
-    return (a[0] * s, a[1] * s, a[2] * s)
-
-
-def vlen(a):
-    return math.sqrt(a[0] ** 2 + a[1] ** 2 + a[2] ** 2)
-
-
+def vsub(a, b): return (a[0] - b[0], a[1] - b[1], a[2] - b[2])
+def vadd(a, b): return (a[0] + b[0], a[1] + b[1], a[2] + b[2])
+def vscale(a, s): return (a[0] * s, a[1] * s, a[2] * s)
+def vlen(a): return math.sqrt(a[0] ** 2 + a[1] ** 2 + a[2] ** 2)
 def vnorm(a):
     l = vlen(a)
     return (a[0] / l, a[1] / l, a[2] / l)
-
-
 def vcross(a, b):
     return (a[1] * b[2] - a[2] * b[1],
             a[2] * b[0] - a[0] * b[2],
             a[0] * b[1] - a[1] * b[0])
-
-
-def vdot(a, b):
-    return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]
+def vdot(a, b): return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]
 
 
 class MeshBuilder:
     def __init__(self):
         self.positions = []
         self.normals = []
-        self.tris = []  # indices into positions/normals (shared index)
+        self.tris = []
 
     def add_vertex(self, p, n):
         self.positions.append(p)
@@ -103,14 +140,6 @@ class MeshBuilder:
 
     def add_tube(self, path, radius, cap_start=True, cap_end=True,
                  end_cut_normal=None, end_flare=1.0):
-        """Sweeps a circle along a polyline, sharing rings at the joints.
-
-        end_cut_normal: if set, the final ring is projected onto the plane
-        through the last station with this normal — a mitre cut, like the
-        angled opening of a classic 4x4 snorkel. end_flare scales the final
-        ring radius slightly outward.
-        """
-        # ring orientation per station: average of adjacent segment tangents
         tangents = []
         for i in range(len(path)):
             if i == 0:
@@ -126,7 +155,6 @@ class MeshBuilder:
         for i, (p, t) in enumerate(zip(path, tangents)):
             is_last = i == len(path) - 1
             r = radius * (end_flare if is_last else 1.0)
-            # build a frame perpendicular to the tangent
             ref = (1.0, 0.0, 0.0) if abs(t[0]) < 0.9 else (0.0, 1.0, 0.0)
             u = vnorm(vcross(t, ref))
             w = vnorm(vcross(t, u))
@@ -136,7 +164,6 @@ class MeshBuilder:
                 n = vadd(vscale(u, math.cos(a)), vscale(w, math.sin(a)))
                 vtx = vadd(p, vscale(n, r))
                 if is_last and end_cut_normal is not None:
-                    # slide the vertex along the tube axis onto the cut plane
                     dn = vdot(t, end_cut_normal)
                     if abs(dn) > 1e-6:
                         shift = -vdot(vsub(vtx, p), end_cut_normal) / dn
@@ -167,17 +194,16 @@ class MeshBuilder:
                     self.tris.append((center, ring[s], ring[s2]))
 
 
-def build_snorkel(size):
+def build_snorkel(st, z_tip):
     m = MeshBuilder()
-    path = PATHS[size]
-    # main tube with a flared, forward-facing mitre-cut opening at the top
+    rt = st["rt"]
+    mast = [(rt[0], rt[1], z) for z in mast_ladder(rt[2], z_tip)]
+    path = [st["p0"], st["p1"], st["p2"], st["pm"], rt] + mast + [(rt[0], rt[1], z_tip)]
     m.add_tube(path, TUBE_R, cap_start=True, cap_end=True,
                end_cut_normal=MITRE_N, end_flare=FLARE)
-    # bracket stubs toward the cab (inboard, +x direction) — always on the
-    # A-pillar section (P2..RT), never on the mast, whatever the tube height
-    pillar_a, pillar_b = P2, RT
+    # bracket stubs toward the cab, always on the pillar section
     for frac in (0.3, 0.8):
-        base = vadd(pillar_a, vscale(vsub(pillar_b, pillar_a), frac))
+        base = vadd(st["p2"], vscale(vsub(rt, st["p2"]), frac))
         m.add_tube([base, vadd(base, (BRACKET_LEN, 0.0, 0.0))], BRACKET_R,
                    cap_start=False, cap_end=True)
     return m
@@ -233,16 +259,8 @@ def node_xml(name):
       </node>"""
 
 
-def main():
-    sizes = ("small", "medium", "tall")
-    geoms = []
-    nodes = []
-    for size in sizes:
-        name = f"snorkel_{size}{OBJ_SUFFIX}"
-        geoms.append(geometry_xml(name, build_snorkel(size)))
-        nodes.append(node_xml(name))
-
-    dae = f"""<?xml version="1.0" encoding="utf-8"?>
+def dae_document(geoms, nodes):
+    return f"""<?xml version="1.0" encoding="utf-8"?>
 <COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
   <asset>
     <contributor><authoring_tool>generate_snorkel_dae.py</authoring_tool></contributor>
@@ -272,15 +290,152 @@ def main():
   <scene><instance_visual_scene url="#Scene"/></scene>
 </COLLADA>
 """
-    out = os.path.join(os.path.dirname(__file__), "..",
-                       "vehicles", "pickup", "universalSnorkel", "snorkel_v8.dae")
-    out = os.path.normpath(out)
-    os.makedirs(os.path.dirname(out), exist_ok=True)
-    with open(out, "w") as f:
-        f.write(dae)
-    print("wrote", out)
-    for size in sizes:
-        print(f"  snorkel_{size}{OBJ_SUFFIX}: opening at {PATHS[size][-1]}")
+
+
+# --- jbeam generation --------------------------------------------------------
+
+SIZE_LABELS = {
+    "small": ("1. Small Snorkel (roof height, {h} m)", 180),
+    "medium": ("2. Medium Snorkel ({h} m)", 220),
+    "tall": ("3. Tall Snorkel ({h} m mast)", 260),
+}
+ANCHOR_EXTRA = {"snb": "e3l", "snf": "e1l", "snp": "e2l", "snr": "e4l"}
+
+
+def jbeam_part(veh, size, st, z_tip, mesh_name):
+    rt = st["rt"]
+    label_tpl, value = SIZE_LABELS[size]
+    label = label_tpl.format(h=("%g" % z_tip))
+    base_nodes = [("snb",) + st["p0"], ("snf",) + st["p1"],
+                  ("snp",) + st["p2"], ("snr",) + rt]
+    mast_nodes = [(f"sn{i+1}", rt[0], rt[1], z)
+                  for i, z in enumerate(mast_ladder(rt[2], z_tip))]
+    nodes = base_nodes + mast_nodes
+    chain = [n[0] for n in nodes] + ["snh"]
+
+    lines = []
+    a = lines.append
+    a(f'"{veh}_snorkel_tube_{size}": {{')
+    a('    "information":{')
+    a('        "authors":"DirtBikeChad",')
+    a(f'        "name":"{label}",')
+    a(f'        "value":{value},')
+    a('    },')
+    a(f'    "slotType" : "{veh}_snorkel_tube",')
+    a('    "flexbodies": [')
+    a('        ["mesh", "[group]:", "nonFlexMaterials"],')
+    a(f'        ["{mesh_name}", ["{veh}_snorkel"]],')
+    a('    ],')
+    a('    "nodes": [')
+    a('        ["id", "posX", "posY", "posZ"],')
+    a('        {"selfCollision":false},')
+    a('        {"collision":true},')
+    a('        {"frictionCoef":0.7},')
+    a('        {"nodeMaterial":"|NM_PLASTIC"},')
+    a(f'        {{"group":"{veh}_snorkel"}},')
+    a('        {"nodeWeight":2.0},')
+    for n, x, y, z in nodes:
+        a(f'        ["{n}", {x}, {y}, {z}],')
+    a('        //opening: this node is the functional air intake.')
+    a('        //water at or above this point floods the engine.')
+    a('        {"engineGroup":["engine_intake"]},')
+    a(f'        ["snh", {rt[0]}, {rt[1]}, {z_tip}],')
+    a('        {"engineGroup":""},')
+    a('        {"group":""},')
+    a('    ],')
+    a('    "beams": [')
+    a('        ["id1:", "id2:"],')
+    a('        {"beamPrecompression":1, "beamType":"|NORMAL"},')
+    a('        //--tube structure: chain + skip-one braces (a node every ~0.5 m')
+    a('        //keeps the flexbody binding sound; moderate spring/damp keeps the')
+    a('        //structure numerically stable)--')
+    a('        {"beamSpring":351000,"beamDamp":120},')
+    a('        {"beamDeform":30000,"beamStrength":80000},')
+    for i in range(len(chain) - 1):
+        a(f'        ["{chain[i]}","{chain[i+1]}"],')
+    for i in range(len(chain) - 2):
+        a(f'        ["{chain[i]}","{chain[i+2]}"],')
+    a('        ["snb","snr"],')
+    if len(chain) > 5:
+        a(f'        ["snf","{chain[4]}"],')
+        a(f'        ["snb","{chain[-1]}"],')
+    a('        //--attachment to the engine block--')
+    a('        //optional: silently skipped on engines without the standard e1..e4 nodes')
+    a('        {"beamSpring":251000,"beamDamp":100},')
+    a('        {"beamDeform":25000,"beamStrength":60000},')
+    a(f'        {{"breakGroup":"{veh}_snorkel_break"}},')
+    a('        {"optional":true},')
+    for n in chain:
+        for e in ("e1r", "e2r", "e3r", "e4r"):
+            a(f'        ["{n}","{e}"],')
+        if n in ANCHOR_EXTRA:
+            a(f'        ["{n}","{ANCHOR_EXTRA[n]}"],')
+    a('        {"optional":false},')
+    a('        {"breakGroup":""},')
+    a('    ],')
+    a('},')
+    return "\n".join(lines)
+
+
+def jbeam_document(veh, st):
+    tips = tip_heights(st["rt"][2])
+    parts = [f'''"{veh}_snorkel_mount": {{
+    "information":{{
+        "authors":"DirtBikeChad",
+        "name":"Snorkel (Right A-Pillar)",
+        "value":120,
+    }},
+    "slotType" : "{veh}_mod",
+    "slots": [
+        ["type", "default", "description"],
+        ["{veh}_snorkel_tube", "{veh}_snorkel_tube_small", "Snorkel"],
+    ],
+}},''']
+    for size in ("small", "medium", "tall"):
+        mesh_name = f"snorkel_{veh}_{size}_{VERSION}"
+        parts.append(jbeam_part(veh, size, st, tips[size], mesh_name))
+    return "{\n" + "\n\n".join(parts) + "\n}\n"
+
+
+MATERIALS = {
+    "snorkel_black": {
+        "name": "snorkel_black",
+        "mapTo": "snorkel_black",
+        "class": "Material",
+        "version": 1.5,
+        "activeLayers": 1,
+        "Stages": [
+            {"baseColorFactor": [0.05, 0.05, 0.055, 1],
+             "metallicFactor": 0.0,
+             "roughnessFactor": 0.55},
+            {}, {}, {}
+        ],
+        "translucent": False,
+        "castShadows": True
+    }
+}
+
+
+def main():
+    root = os.path.normpath(os.path.join(os.path.dirname(__file__), ".."))
+    for veh, st in VEHICLES.items():
+        outdir = os.path.join(root, "vehicles", veh, "universalSnorkel")
+        os.makedirs(outdir, exist_ok=True)
+        tips = tip_heights(st["rt"][2])
+        geoms, nodes = [], []
+        for size in ("small", "medium", "tall"):
+            name = f"snorkel_{veh}_{size}_{VERSION}"
+            mesh = build_snorkel(st, tips[size])
+            geoms.append(geometry_xml(name, mesh))
+            nodes.append(node_xml(name))
+        with open(os.path.join(outdir, f"snorkel_{VERSION}.dae"), "w") as f:
+            f.write(dae_document(geoms, nodes))
+        with open(os.path.join(outdir, f"{veh}_snorkel.jbeam"), "w") as f:
+            f.write(jbeam_document(veh, st))
+        with open(os.path.join(outdir, "main.materials.json"), "w") as f:
+            json.dump(MATERIALS, f, indent=2)
+        print(f"{veh}: tips {tips}")
+    print(f"generated {len(VEHICLES)} vehicles")
 
 
 if __name__ == "__main__":
