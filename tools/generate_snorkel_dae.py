@@ -33,7 +33,7 @@ import json
 import math
 import os
 
-VERSION = "v10"
+VERSION = "v11"
 SEGMENTS = 24          # radial resolution of the tubes
 TUBE_R = 0.040         # main tube radius (~80 mm OD, typical safari snorkel)
 FLARE = 1.12           # slight flare of the mitre opening
@@ -52,7 +52,9 @@ MAST_STEP = 0.5        # a node + mesh ring at least every ~0.5 m of mast
 def stations(x, y_bay, z_bay, y_fender, z_fender, y_base, z_base, y_roof, z_roof):
     xo = x + 0.01  # pillar run sits a touch inboard, following the cab taper
     return {
-        "p0": (x + 0.09, y_bay, z_bay),
+        # start buried inside the fender near the cowl, so the capped lower
+        # end of the tube is never visible floating beside the body
+        "p0": (round(x + 0.06, 3), round(y_base - 0.30, 3), round(z_base - 0.20, 3)),
         "p1": (x, y_fender, z_fender),
         "p2": (x, y_base, z_base),
         "pm": (xo, (y_base + y_roof) / 2.0, (z_base + z_roof) / 2.0),
@@ -74,30 +76,30 @@ VEHICLES = {
     "van":       stations(-0.95, -1.55, 0.95, -1.40, 1.10, -1.30, 1.45, -1.05, 2.05),
     "wydra":     stations(-0.80, -1.00, 0.95, -0.85, 1.05, -0.75, 1.25, -0.50, 1.60),
     # large sedans / classics
-    "fullsize":  stations(-0.92, -1.25, 0.88, -1.00, 0.95, -0.55, 1.05, -0.25, 1.42),
-    "moonhawk":  stations(-0.95, -1.30, 0.85, -1.05, 0.92, -0.55, 1.02, -0.25, 1.40),
-    "barstow":   stations(-0.95, -1.30, 0.85, -1.05, 0.92, -0.55, 1.02, -0.25, 1.38),
-    "bluebuck":  stations(-0.95, -1.30, 0.88, -1.05, 0.95, -0.55, 1.05, -0.25, 1.45),
-    "burnside":  stations(-0.95, -1.35, 0.95, -1.10, 1.02, -0.60, 1.12, -0.28, 1.55),
-    "miramar":   stations(-0.80, -1.10, 0.82, -0.90, 0.88, -0.50, 0.98, -0.22, 1.40),
-    "legran":    stations(-0.88, -1.20, 0.85, -0.95, 0.92, -0.52, 1.02, -0.24, 1.40),
-    "lansdale":  stations(-0.90, -1.20, 0.87, -0.95, 0.94, -0.52, 1.04, -0.24, 1.45),
-    "wendover":  stations(-0.90, -1.20, 0.86, -0.95, 0.93, -0.52, 1.03, -0.24, 1.42),
-    "bastion":   stations(-0.90, -1.25, 0.85, -1.00, 0.92, -0.55, 1.02, -0.25, 1.40),
+    "fullsize":  stations(-0.82, -1.25, 0.88, -1.00, 0.95, -0.55, 1.05, -0.25, 1.42),
+    "moonhawk":  stations(-0.83, -1.30, 0.85, -1.05, 0.92, -0.55, 1.02, -0.25, 1.40),
+    "barstow":   stations(-0.83, -1.30, 0.85, -1.05, 0.92, -0.55, 1.02, -0.25, 1.38),
+    "bluebuck":  stations(-0.83, -1.30, 0.88, -1.05, 0.95, -0.55, 1.05, -0.25, 1.45),
+    "burnside":  stations(-0.83, -1.35, 0.95, -1.10, 1.02, -0.60, 1.12, -0.28, 1.55),
+    "miramar":   stations(-0.72, -1.10, 0.82, -0.90, 0.88, -0.50, 0.98, -0.22, 1.40),
+    "legran":    stations(-0.78, -1.20, 0.85, -0.95, 0.92, -0.52, 1.02, -0.24, 1.40),
+    "lansdale":  stations(-0.79, -1.20, 0.87, -0.95, 0.94, -0.52, 1.04, -0.24, 1.45),
+    "wendover":  stations(-0.79, -1.20, 0.86, -0.95, 0.93, -0.52, 1.03, -0.24, 1.42),
+    "bastion":   stations(-0.79, -1.25, 0.85, -1.00, 0.92, -0.55, 1.02, -0.25, 1.40),
     # compacts / midsize
-    "covet":     stations(-0.78, -1.05, 0.78, -0.85, 0.85, -0.48, 0.95, -0.22, 1.35),
-    "pessima":   stations(-0.85, -1.15, 0.82, -0.92, 0.89, -0.50, 0.99, -0.23, 1.38),
-    "midsize":   stations(-0.85, -1.15, 0.82, -0.92, 0.89, -0.50, 0.99, -0.23, 1.38),
-    "sunburst":  stations(-0.85, -1.15, 0.82, -0.92, 0.89, -0.50, 0.99, -0.23, 1.42),
-    "vivace":    stations(-0.85, -1.15, 0.83, -0.92, 0.90, -0.50, 1.00, -0.23, 1.43),
-    "etk800":    stations(-0.87, -1.20, 0.84, -0.95, 0.91, -0.52, 1.01, -0.24, 1.42),
-    "etki":      stations(-0.87, -1.18, 0.83, -0.95, 0.90, -0.52, 1.00, -0.24, 1.40),
-    "autobello": stations(-0.72, -0.95, 0.75, -0.80, 0.82, -0.45, 0.92, -0.20, 1.35),
+    "covet":     stations(-0.7, -1.05, 0.78, -0.85, 0.85, -0.48, 0.95, -0.22, 1.35),
+    "pessima":   stations(-0.76, -1.15, 0.82, -0.92, 0.89, -0.50, 0.99, -0.23, 1.38),
+    "midsize":   stations(-0.76, -1.15, 0.82, -0.92, 0.89, -0.50, 0.99, -0.23, 1.38),
+    "sunburst":  stations(-0.76, -1.15, 0.82, -0.92, 0.89, -0.50, 0.99, -0.23, 1.42),
+    "vivace":    stations(-0.76, -1.15, 0.83, -0.92, 0.90, -0.50, 1.00, -0.23, 1.43),
+    "etk800":    stations(-0.77, -1.20, 0.84, -0.95, 0.91, -0.52, 1.01, -0.24, 1.42),
+    "etki":      stations(-0.77, -1.18, 0.83, -0.95, 0.90, -0.52, 1.00, -0.24, 1.40),
+    "autobello": stations(-0.64, -0.95, 0.75, -0.80, 0.82, -0.45, 0.92, -0.20, 1.35),
     # low coupes (a snorkel on these is comedy, but it works)
-    "etkc":      stations(-0.87, -1.18, 0.80, -0.95, 0.87, -0.52, 0.95, -0.24, 1.32),
-    "bolide":    stations(-0.88, -1.10, 0.70, -0.95, 0.77, -0.55, 0.85, -0.28, 1.18),
-    "sbr":       stations(-0.88, -1.10, 0.72, -0.95, 0.79, -0.55, 0.87, -0.28, 1.20),
-    "scintilla": stations(-0.90, -1.12, 0.72, -0.98, 0.79, -0.58, 0.87, -0.30, 1.20),
+    "etkc":      stations(-0.77, -1.18, 0.80, -0.95, 0.87, -0.52, 0.95, -0.24, 1.32),
+    "bolide":    stations(-0.78, -1.10, 0.70, -0.95, 0.77, -0.55, 0.85, -0.28, 1.18),
+    "sbr":       stations(-0.78, -1.10, 0.72, -0.95, 0.79, -0.55, 0.87, -0.28, 1.20),
+    "scintilla": stations(-0.79, -1.12, 0.72, -0.98, 0.79, -0.58, 0.87, -0.30, 1.20),
 }
 
 

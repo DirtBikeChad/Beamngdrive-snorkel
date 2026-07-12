@@ -21,7 +21,7 @@
     "slotType" : "wydra_snorkel_tube",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
-        ["snorkel_wydra_small_v10", ["wydra_snorkel"]],
+        ["snorkel_wydra_small_v11", ["wydra_snorkel"]],
     ],
     "nodes": [
         ["id", "posX", "posY", "posZ"],
@@ -31,7 +31,7 @@
         {"nodeMaterial":"|NM_PLASTIC"},
         {"group":"wydra_snorkel"},
         {"nodeWeight":1.2},
-        ["snb", -0.7100000000000001, -1.0, 0.95],
+        ["snb", -0.74, -1.05, 1.05],
         ["snf", -0.8, -0.85, 1.05],
         ["snp", -0.8, -0.75, 1.25],
         ["snr", -0.79, -0.5, 1.6],
@@ -114,7 +114,7 @@
     "slotType" : "wydra_snorkel_tube",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
-        ["snorkel_wydra_medium_v10", ["wydra_snorkel"]],
+        ["snorkel_wydra_medium_v11", ["wydra_snorkel"]],
     ],
     "nodes": [
         ["id", "posX", "posY", "posZ"],
@@ -124,7 +124,7 @@
         {"nodeMaterial":"|NM_PLASTIC"},
         {"group":"wydra_snorkel"},
         {"nodeWeight":1.2},
-        ["snb", -0.7100000000000001, -1.0, 0.95],
+        ["snb", -0.74, -1.05, 1.05],
         ["snf", -0.8, -0.85, 1.05],
         ["snp", -0.8, -0.75, 1.25],
         ["snr", -0.79, -0.5, 1.6],
@@ -231,7 +231,7 @@
     "slotType" : "wydra_snorkel_tube",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
-        ["snorkel_wydra_tall_v10", ["wydra_snorkel"]],
+        ["snorkel_wydra_tall_v11", ["wydra_snorkel"]],
     ],
     "nodes": [
         ["id", "posX", "posY", "posZ"],
@@ -241,7 +241,7 @@
         {"nodeMaterial":"|NM_PLASTIC"},
         {"group":"wydra_snorkel"},
         {"nodeWeight":1.2},
-        ["snb", -0.7100000000000001, -1.0, 0.95],
+        ["snb", -0.74, -1.05, 1.05],
         ["snf", -0.8, -0.85, 1.05],
         ["snp", -0.8, -0.75, 1.25],
         ["snr", -0.79, -0.5, 1.6],

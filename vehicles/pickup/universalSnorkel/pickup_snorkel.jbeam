@@ -8,7 +8,7 @@
     "slotType" : "pickup_snorkel",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
-        ["snorkel_pickup_small_v10", ["pickup_snorkel"]],
+        ["snorkel_pickup_small_v11", ["pickup_snorkel"]],
     ],
     "nodes": [
         ["id", "posX", "posY", "posZ"],
@@ -18,7 +18,7 @@
         {"nodeMaterial":"|NM_PLASTIC"},
         {"group":"pickup_snorkel"},
         {"nodeWeight":1.2},
-        ["snb", -0.9, -1.16, 0.97],
+        ["snb", -0.93, -1.16, 1.1],
         ["snf", -0.99, -0.92, 1.05],
         ["snp", -0.99, -0.86, 1.3],
         ["snr", -0.98, -0.58, 1.9],
@@ -101,7 +101,7 @@
     "slotType" : "pickup_snorkel",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
-        ["snorkel_pickup_medium_v10", ["pickup_snorkel"]],
+        ["snorkel_pickup_medium_v11", ["pickup_snorkel"]],
     ],
     "nodes": [
         ["id", "posX", "posY", "posZ"],
@@ -111,7 +111,7 @@
         {"nodeMaterial":"|NM_PLASTIC"},
         {"group":"pickup_snorkel"},
         {"nodeWeight":1.2},
-        ["snb", -0.9, -1.16, 0.97],
+        ["snb", -0.93, -1.16, 1.1],
         ["snf", -0.99, -0.92, 1.05],
         ["snp", -0.99, -0.86, 1.3],
         ["snr", -0.98, -0.58, 1.9],
@@ -206,7 +206,7 @@
     "slotType" : "pickup_snorkel",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
-        ["snorkel_pickup_tall_v10", ["pickup_snorkel"]],
+        ["snorkel_pickup_tall_v11", ["pickup_snorkel"]],
     ],
     "nodes": [
         ["id", "posX", "posY", "posZ"],
@@ -216,7 +216,7 @@
         {"nodeMaterial":"|NM_PLASTIC"},
         {"group":"pickup_snorkel"},
         {"nodeWeight":1.2},
-        ["snb", -0.9, -1.16, 0.97],
+        ["snb", -0.93, -1.16, 1.1],
         ["snf", -0.99, -0.92, 1.05],
         ["snp", -0.99, -0.86, 1.3],
         ["snr", -0.98, -0.58, 1.9],

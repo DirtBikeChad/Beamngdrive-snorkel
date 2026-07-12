@@ -8,7 +8,7 @@
     "slotType" : "hopper_snorkel",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
-        ["snorkel_hopper_small_v10", ["hopper_snorkel"]],
+        ["snorkel_hopper_small_v11", ["hopper_snorkel"]],
     ],
     "nodes": [
         ["id", "posX", "posY", "posZ"],
@@ -18,7 +18,7 @@
         {"nodeMaterial":"|NM_PLASTIC"},
         {"group":"hopper_snorkel"},
         {"nodeWeight":1.2},
-        ["snb", -0.75, -0.95, 1.0],
+        ["snb", -0.78, -1.02, 1.08],
         ["snf", -0.84, -0.78, 1.08],
         ["snp", -0.84, -0.72, 1.28],
         ["snr", -0.83, -0.48, 1.75],
@@ -101,7 +101,7 @@
     "slotType" : "hopper_snorkel",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
-        ["snorkel_hopper_medium_v10", ["hopper_snorkel"]],
+        ["snorkel_hopper_medium_v11", ["hopper_snorkel"]],
     ],
     "nodes": [
         ["id", "posX", "posY", "posZ"],
@@ -111,7 +111,7 @@
         {"nodeMaterial":"|NM_PLASTIC"},
         {"group":"hopper_snorkel"},
         {"nodeWeight":1.2},
-        ["snb", -0.75, -0.95, 1.0],
+        ["snb", -0.78, -1.02, 1.08],
         ["snf", -0.84, -0.78, 1.08],
         ["snp", -0.84, -0.72, 1.28],
         ["snr", -0.83, -0.48, 1.75],
@@ -218,7 +218,7 @@
     "slotType" : "hopper_snorkel",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
-        ["snorkel_hopper_tall_v10", ["hopper_snorkel"]],
+        ["snorkel_hopper_tall_v11", ["hopper_snorkel"]],
     ],
     "nodes": [
         ["id", "posX", "posY", "posZ"],
@@ -228,7 +228,7 @@
         {"nodeMaterial":"|NM_PLASTIC"},
         {"group":"hopper_snorkel"},
         {"nodeWeight":1.2},
-        ["snb", -0.75, -0.95, 1.0],
+        ["snb", -0.78, -1.02, 1.08],
         ["snf", -0.84, -0.78, 1.08],
         ["snp", -0.84, -0.72, 1.28],
         ["snr", -0.83, -0.48, 1.75],
