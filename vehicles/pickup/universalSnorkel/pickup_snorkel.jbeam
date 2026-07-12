@@ -1,24 +1,11 @@
 {
-"pickup_snorkel_mount": {
-    "information":{
-        "authors":"DirtBikeChad",
-        "name":"Snorkel (Right A-Pillar)",
-        "value":120,
-    },
-    "slotType" : "pickup_mod",
-    "slots": [
-        ["type", "default", "description"],
-        ["pickup_snorkel_tube", "pickup_snorkel_tube_small", "Snorkel"],
-    ],
-},
-
 "pickup_snorkel_tube_small": {
     "information":{
         "authors":"DirtBikeChad",
         "name":"1. Small Snorkel (roof height, 2 m)",
         "value":180,
     },
-    "slotType" : "pickup_snorkel_tube",
+    "slotType" : "pickup_snorkel",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
         ["snorkel_pickup_small_v10", ["pickup_snorkel"]],
@@ -111,7 +98,7 @@
         "name":"2. Medium Snorkel (3 m)",
         "value":220,
     },
-    "slotType" : "pickup_snorkel_tube",
+    "slotType" : "pickup_snorkel",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
         ["snorkel_pickup_medium_v10", ["pickup_snorkel"]],
@@ -216,7 +203,7 @@
         "name":"3. Tall Snorkel (5 m mast)",
         "value":260,
     },
-    "slotType" : "pickup_snorkel_tube",
+    "slotType" : "pickup_snorkel",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
         ["snorkel_pickup_tall_v10", ["pickup_snorkel"]],

@@ -59,6 +59,11 @@ def stations(x, y_bay, z_bay, y_fender, z_fender, y_base, z_base, y_roof, z_roof
         "rt": (xo, y_roof, z_roof),
     }
 
+# vehicles with a vanilla dedicated snorkel slot (<veh>_snorkel): our tubes
+# are offered inside that slot, next to the stock snorkel, instead of via the
+# Additional Modification mount
+NATIVE_SNORKEL_SLOT = {"pickup", "roamer", "van", "hopper"}
+
 VEHICLES = {
     # verified in-game
     "pickup":    stations(-0.99, -1.16, 0.97, -0.92, 1.05, -0.86, 1.30, -0.58, 1.90),
@@ -307,7 +312,7 @@ ANCHOR_EXTRA = {"snb": "e3l", "snf": "e1l", "snp": "e2l", "snr": "e4l"}
 OFFSET_X = 0.25   # sideways offset of the invisible ladder-rung nodes (inboard)
 
 
-def jbeam_part(veh, size, st, z_tip, mesh_name):
+def jbeam_part(veh, size, st, z_tip, mesh_name, slot_type):
     rt = st["rt"]
     label_tpl, value = SIZE_LABELS[size]
     label = label_tpl.format(h=("%g" % z_tip))
@@ -332,7 +337,7 @@ def jbeam_part(veh, size, st, z_tip, mesh_name):
     a(f'        "name":"{label}",')
     a(f'        "value":{value},')
     a('    },')
-    a(f'    "slotType" : "{veh}_snorkel_tube",')
+    a(f'    "slotType" : "{slot_type}",')
     a('    "flexbodies": [')
     a('        ["mesh", "[group]:", "nonFlexMaterials"],')
     a(f'        ["{mesh_name}", ["{veh}_snorkel"]],')
@@ -405,7 +410,10 @@ def jbeam_part(veh, size, st, z_tip, mesh_name):
 
 def jbeam_document(veh, st):
     tips = tip_heights(st["rt"][2])
-    parts = [f'''"{veh}_snorkel_mount": {{
+    native = veh in NATIVE_SNORKEL_SLOT
+    parts = []
+    if not native:
+        parts.append(f'''"{veh}_snorkel_mount": {{
     "information":{{
         "authors":"DirtBikeChad",
         "name":"Snorkel (Right A-Pillar)",
@@ -416,10 +424,11 @@ def jbeam_document(veh, st):
         ["type", "default", "description"],
         ["{veh}_snorkel_tube", "{veh}_snorkel_tube_small", "Snorkel"],
     ],
-}},''']
+}},''')
+    slot_type = f"{veh}_snorkel" if native else f"{veh}_snorkel_tube"
     for size in ("small", "medium", "tall"):
         mesh_name = f"snorkel_{veh}_{size}_{VERSION}"
-        parts.append(jbeam_part(veh, size, st, tips[size], mesh_name))
+        parts.append(jbeam_part(veh, size, st, tips[size], mesh_name, slot_type))
     return "{\n" + "\n\n".join(parts) + "\n}\n"
 
 

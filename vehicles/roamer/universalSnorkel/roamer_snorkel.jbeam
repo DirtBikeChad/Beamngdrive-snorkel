@@ -1,24 +1,11 @@
 {
-"roamer_snorkel_mount": {
-    "information":{
-        "authors":"DirtBikeChad",
-        "name":"Snorkel (Right A-Pillar)",
-        "value":120,
-    },
-    "slotType" : "roamer_mod",
-    "slots": [
-        ["type", "default", "description"],
-        ["roamer_snorkel_tube", "roamer_snorkel_tube_small", "Snorkel"],
-    ],
-},
-
 "roamer_snorkel_tube_small": {
     "information":{
         "authors":"DirtBikeChad",
         "name":"1. Small Snorkel (roof height, 2 m)",
         "value":180,
     },
-    "slotType" : "roamer_snorkel_tube",
+    "slotType" : "roamer_snorkel",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
         ["snorkel_roamer_small_v10", ["roamer_snorkel"]],
@@ -111,7 +98,7 @@
         "name":"2. Medium Snorkel (3 m)",
         "value":220,
     },
-    "slotType" : "roamer_snorkel_tube",
+    "slotType" : "roamer_snorkel",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
         ["snorkel_roamer_medium_v10", ["roamer_snorkel"]],
@@ -216,7 +203,7 @@
         "name":"3. Tall Snorkel (5 m mast)",
         "value":260,
     },
-    "slotType" : "roamer_snorkel_tube",
+    "slotType" : "roamer_snorkel",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
         ["snorkel_roamer_tall_v10", ["roamer_snorkel"]],

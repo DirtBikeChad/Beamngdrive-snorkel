@@ -1,24 +1,11 @@
 {
-"van_snorkel_mount": {
-    "information":{
-        "authors":"DirtBikeChad",
-        "name":"Snorkel (Right A-Pillar)",
-        "value":120,
-    },
-    "slotType" : "van_mod",
-    "slots": [
-        ["type", "default", "description"],
-        ["van_snorkel_tube", "van_snorkel_tube_small", "Snorkel"],
-    ],
-},
-
 "van_snorkel_tube_small": {
     "information":{
         "authors":"DirtBikeChad",
         "name":"1. Small Snorkel (roof height, 2.15 m)",
         "value":180,
     },
-    "slotType" : "van_snorkel_tube",
+    "slotType" : "van_snorkel",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
         ["snorkel_van_small_v10", ["van_snorkel"]],
@@ -111,7 +98,7 @@
         "name":"2. Medium Snorkel (3 m)",
         "value":220,
     },
-    "slotType" : "van_snorkel_tube",
+    "slotType" : "van_snorkel",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
         ["snorkel_van_medium_v10", ["van_snorkel"]],
@@ -216,7 +203,7 @@
         "name":"3. Tall Snorkel (5 m mast)",
         "value":260,
     },
-    "slotType" : "van_snorkel_tube",
+    "slotType" : "van_snorkel",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
         ["snorkel_van_tall_v10", ["van_snorkel"]],

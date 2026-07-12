@@ -1,24 +1,11 @@
 {
-"hopper_snorkel_mount": {
-    "information":{
-        "authors":"DirtBikeChad",
-        "name":"Snorkel (Right A-Pillar)",
-        "value":120,
-    },
-    "slotType" : "hopper_mod",
-    "slots": [
-        ["type", "default", "description"],
-        ["hopper_snorkel_tube", "hopper_snorkel_tube_small", "Snorkel"],
-    ],
-},
-
 "hopper_snorkel_tube_small": {
     "information":{
         "authors":"DirtBikeChad",
         "name":"1. Small Snorkel (roof height, 2 m)",
         "value":180,
     },
-    "slotType" : "hopper_snorkel_tube",
+    "slotType" : "hopper_snorkel",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
         ["snorkel_hopper_small_v10", ["hopper_snorkel"]],
@@ -111,7 +98,7 @@
         "name":"2. Medium Snorkel (3 m)",
         "value":220,
     },
-    "slotType" : "hopper_snorkel_tube",
+    "slotType" : "hopper_snorkel",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
         ["snorkel_hopper_medium_v10", ["hopper_snorkel"]],
@@ -228,7 +215,7 @@
         "name":"3. Tall Snorkel (5 m mast)",
         "value":260,
     },
-    "slotType" : "hopper_snorkel_tube",
+    "slotType" : "hopper_snorkel",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
         ["snorkel_hopper_tall_v10", ["hopper_snorkel"]],
