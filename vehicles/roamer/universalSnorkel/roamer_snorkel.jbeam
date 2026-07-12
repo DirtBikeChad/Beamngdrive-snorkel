@@ -21,7 +21,7 @@
     "slotType" : "roamer_snorkel_tube",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
-        ["snorkel_roamer_small_v9", ["roamer_snorkel"]],
+        ["snorkel_roamer_small_v10", ["roamer_snorkel"]],
     ],
     "nodes": [
         ["id", "posX", "posY", "posZ"],
@@ -30,7 +30,7 @@
         {"frictionCoef":0.7},
         {"nodeMaterial":"|NM_PLASTIC"},
         {"group":"roamer_snorkel"},
-        {"nodeWeight":2.0},
+        {"nodeWeight":1.2},
         ["snb", -0.9, -1.16, 0.97],
         ["snf", -0.99, -0.92, 1.05],
         ["snp", -0.99, -0.86, 1.3],
@@ -40,14 +40,19 @@
         {"engineGroup":["engine_intake"]},
         ["snh", -0.98, -0.58, 2.0],
         {"engineGroup":""},
+        //invisible ladder rungs: the flexbody binder needs nodes forming
+        //~90 degree angles near every vertex; a straight line of nodes
+        //shears the mesh (official flexbodies docs)
+        {"collision":false},
+        ["snrb", -0.73, -0.58, 1.9],
+        ["snhb", -0.73, -0.58, 2.0],
+        {"collision":true},
         {"group":""},
     ],
     "beams": [
         ["id1:", "id2:"],
         {"beamPrecompression":1, "beamType":"|NORMAL"},
-        //--tube structure: chain + skip-one braces (a node every ~0.5 m
-        //keeps the flexbody binding sound; moderate spring/damp keeps the
-        //structure numerically stable)--
+        //--ladder truss structure--
         {"beamSpring":351000,"beamDamp":120},
         {"beamDeform":30000,"beamStrength":80000},
         ["snb","snf"],
@@ -58,6 +63,13 @@
         ["snf","snr"],
         ["snp","snh"],
         ["snb","snr"],
+        ["snrb","snhb"],
+        ["snr","snrb"],
+        ["snh","snhb"],
+        ["snr","snhb"],
+        ["snrb","snh"],
+        ["snp","snrb"],
+        ["snf","snrb"],
         //--attachment to the engine block--
         //optional: silently skipped on engines without the standard e1..e4 nodes
         {"beamSpring":251000,"beamDamp":100},
@@ -102,7 +114,7 @@
     "slotType" : "roamer_snorkel_tube",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
-        ["snorkel_roamer_medium_v9", ["roamer_snorkel"]],
+        ["snorkel_roamer_medium_v10", ["roamer_snorkel"]],
     ],
     "nodes": [
         ["id", "posX", "posY", "posZ"],
@@ -111,7 +123,7 @@
         {"frictionCoef":0.7},
         {"nodeMaterial":"|NM_PLASTIC"},
         {"group":"roamer_snorkel"},
-        {"nodeWeight":2.0},
+        {"nodeWeight":1.2},
         ["snb", -0.9, -1.16, 0.97],
         ["snf", -0.99, -0.92, 1.05],
         ["snp", -0.99, -0.86, 1.3],
@@ -122,14 +134,20 @@
         {"engineGroup":["engine_intake"]},
         ["snh", -0.98, -0.58, 3.0],
         {"engineGroup":""},
+        //invisible ladder rungs: the flexbody binder needs nodes forming
+        //~90 degree angles near every vertex; a straight line of nodes
+        //shears the mesh (official flexbodies docs)
+        {"collision":false},
+        ["snrb", -0.73, -0.58, 1.9],
+        ["sn1b", -0.73, -0.58, 2.4],
+        ["snhb", -0.73, -0.58, 3.0],
+        {"collision":true},
         {"group":""},
     ],
     "beams": [
         ["id1:", "id2:"],
         {"beamPrecompression":1, "beamType":"|NORMAL"},
-        //--tube structure: chain + skip-one braces (a node every ~0.5 m
-        //keeps the flexbody binding sound; moderate spring/damp keeps the
-        //structure numerically stable)--
+        //--ladder truss structure--
         {"beamSpring":351000,"beamDamp":120},
         {"beamDeform":30000,"beamStrength":80000},
         ["snb","snf"],
@@ -142,8 +160,17 @@
         ["snp","sn1"],
         ["snr","snh"],
         ["snb","snr"],
-        ["snf","sn1"],
-        ["snb","snh"],
+        ["snrb","sn1b"],
+        ["sn1b","snhb"],
+        ["snr","snrb"],
+        ["sn1","sn1b"],
+        ["snh","snhb"],
+        ["snr","sn1b"],
+        ["snrb","sn1"],
+        ["sn1","snhb"],
+        ["sn1b","snh"],
+        ["snp","snrb"],
+        ["snf","snrb"],
         //--attachment to the engine block--
         //optional: silently skipped on engines without the standard e1..e4 nodes
         {"beamSpring":251000,"beamDamp":100},
@@ -192,7 +219,7 @@
     "slotType" : "roamer_snorkel_tube",
     "flexbodies": [
         ["mesh", "[group]:", "nonFlexMaterials"],
-        ["snorkel_roamer_tall_v9", ["roamer_snorkel"]],
+        ["snorkel_roamer_tall_v10", ["roamer_snorkel"]],
     ],
     "nodes": [
         ["id", "posX", "posY", "posZ"],
@@ -201,7 +228,7 @@
         {"frictionCoef":0.7},
         {"nodeMaterial":"|NM_PLASTIC"},
         {"group":"roamer_snorkel"},
-        {"nodeWeight":2.0},
+        {"nodeWeight":1.2},
         ["snb", -0.9, -1.16, 0.97],
         ["snf", -0.99, -0.92, 1.05],
         ["snp", -0.99, -0.86, 1.3],
@@ -216,14 +243,24 @@
         {"engineGroup":["engine_intake"]},
         ["snh", -0.98, -0.58, 5.0],
         {"engineGroup":""},
+        //invisible ladder rungs: the flexbody binder needs nodes forming
+        //~90 degree angles near every vertex; a straight line of nodes
+        //shears the mesh (official flexbodies docs)
+        {"collision":false},
+        ["snrb", -0.73, -0.58, 1.9],
+        ["sn1b", -0.73, -0.58, 2.4],
+        ["sn2b", -0.73, -0.58, 2.9],
+        ["sn3b", -0.73, -0.58, 3.4],
+        ["sn4b", -0.73, -0.58, 3.9],
+        ["sn5b", -0.73, -0.58, 4.4],
+        ["snhb", -0.73, -0.58, 5.0],
+        {"collision":true},
         {"group":""},
     ],
     "beams": [
         ["id1:", "id2:"],
         {"beamPrecompression":1, "beamType":"|NORMAL"},
-        //--tube structure: chain + skip-one braces (a node every ~0.5 m
-        //keeps the flexbody binding sound; moderate spring/damp keeps the
-        //structure numerically stable)--
+        //--ladder truss structure--
         {"beamSpring":351000,"beamDamp":120},
         {"beamDeform":30000,"beamStrength":80000},
         ["snb","snf"],
@@ -244,8 +281,33 @@
         ["sn3","sn5"],
         ["sn4","snh"],
         ["snb","snr"],
-        ["snf","sn1"],
-        ["snb","snh"],
+        ["snrb","sn1b"],
+        ["sn1b","sn2b"],
+        ["sn2b","sn3b"],
+        ["sn3b","sn4b"],
+        ["sn4b","sn5b"],
+        ["sn5b","snhb"],
+        ["snr","snrb"],
+        ["sn1","sn1b"],
+        ["sn2","sn2b"],
+        ["sn3","sn3b"],
+        ["sn4","sn4b"],
+        ["sn5","sn5b"],
+        ["snh","snhb"],
+        ["snr","sn1b"],
+        ["snrb","sn1"],
+        ["sn1","sn2b"],
+        ["sn1b","sn2"],
+        ["sn2","sn3b"],
+        ["sn2b","sn3"],
+        ["sn3","sn4b"],
+        ["sn3b","sn4"],
+        ["sn4","sn5b"],
+        ["sn4b","sn5"],
+        ["sn5","snhb"],
+        ["sn5b","snh"],
+        ["snp","snrb"],
+        ["snf","snrb"],
         //--attachment to the engine block--
         //optional: silently skipped on engines without the standard e1..e4 nodes
         {"beamSpring":251000,"beamDamp":100},

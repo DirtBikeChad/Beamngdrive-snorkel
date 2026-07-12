@@ -4,8 +4,8 @@
 For each vehicle in VEHICLES this writes, under
 vehicles/<veh>/universalSnorkel/:
 
-  * snorkel_v9.dae        - three tube meshes (small/medium/tall), objects
-                            named snorkel_<veh>_<size>_v9
+  * snorkel_v10.dae        - three tube meshes (small/medium/tall), objects
+                            named snorkel_<veh>_<size>_v10
   * <veh>_snorkel.jbeam   - mount part in the vehicle's "Additional
                             Modification" slot (<veh>_mod) + three tube parts
   * main.materials.json   - the snorkel_black material
@@ -13,8 +13,12 @@ vehicles/<veh>/universalSnorkel/:
 Design rules learned the hard way (see docs/HOW_IT_WORKS.md):
   * every tube ends in a short VERTICAL section before the mitre cut, or the
     cut ellipse stretches into a huge blade;
-  * a physics node AND a mesh ring every ~0.5 m of mast, or the flexbody
-    binding shears the mesh into a triangle;
+  * flexbody vertex binding requires nodes forming ROUGHLY 90 DEGREE angles
+    near every vertex (official flexbodies docs) - a straight line of nodes
+    makes the mesh invisible or "weirdly stretched". So the tube skeleton is
+    a narrow LADDER: every mast level has an axis node plus an invisible
+    node offset sideways, guaranteeing a right-angle pair everywhere;
+  * a node level AND a mesh ring every ~0.5 m of mast;
   * beamSpring/beamDamp moderate relative to nodeWeight, or the part goes
     numerically unstable and breaks itself on spawn.
 
@@ -29,7 +33,7 @@ import json
 import math
 import os
 
-VERSION = "v9"
+VERSION = "v10"
 SEGMENTS = 24          # radial resolution of the tubes
 TUBE_R = 0.040         # main tube radius (~80 mm OD, typical safari snorkel)
 FLARE = 1.12           # slight flare of the mitre opening
@@ -300,18 +304,25 @@ SIZE_LABELS = {
     "tall": ("3. Tall Snorkel ({h} m mast)", 260),
 }
 ANCHOR_EXTRA = {"snb": "e3l", "snf": "e1l", "snp": "e2l", "snr": "e4l"}
+OFFSET_X = 0.25   # sideways offset of the invisible ladder-rung nodes (inboard)
 
 
 def jbeam_part(veh, size, st, z_tip, mesh_name):
     rt = st["rt"]
     label_tpl, value = SIZE_LABELS[size]
     label = label_tpl.format(h=("%g" % z_tip))
-    base_nodes = [("snb",) + st["p0"], ("snf",) + st["p1"],
-                  ("snp",) + st["p2"], ("snr",) + rt]
-    mast_nodes = [(f"sn{i+1}", rt[0], rt[1], z)
-                  for i, z in enumerate(mast_ladder(rt[2], z_tip))]
-    nodes = base_nodes + mast_nodes
-    chain = [n[0] for n in nodes] + ["snh"]
+    # ladder levels: roof, every ~0.5 m of mast, tip
+    levels = [rt[2]] + mast_ladder(rt[2], z_tip) + [z_tip]
+    axis = []
+    for i, z in enumerate(levels):
+        if i == 0:
+            axis.append(("snr", z))
+        elif i == len(levels) - 1:
+            axis.append(("snh", z))
+        else:
+            axis.append((f"sn{i}", z))
+    base_nodes = [("snb",) + st["p0"], ("snf",) + st["p1"], ("snp",) + st["p2"]]
+    off_x = round(rt[0] + OFFSET_X, 3)
 
     lines = []
     a = lines.append
@@ -333,39 +344,54 @@ def jbeam_part(veh, size, st, z_tip, mesh_name):
     a('        {"frictionCoef":0.7},')
     a('        {"nodeMaterial":"|NM_PLASTIC"},')
     a(f'        {{"group":"{veh}_snorkel"}},')
-    a('        {"nodeWeight":2.0},')
-    for n, x, y, z in nodes:
+    a('        {"nodeWeight":1.2},')
+    for n, x, y, z in base_nodes:
         a(f'        ["{n}", {x}, {y}, {z}],')
+    for n, z in axis[:-1]:
+        a(f'        ["{n}", {rt[0]}, {rt[1]}, {z}],')
     a('        //opening: this node is the functional air intake.')
     a('        //water at or above this point floods the engine.')
     a('        {"engineGroup":["engine_intake"]},')
     a(f'        ["snh", {rt[0]}, {rt[1]}, {z_tip}],')
     a('        {"engineGroup":""},')
+    a('        //invisible ladder rungs: the flexbody binder needs nodes forming')
+    a('        //~90 degree angles near every vertex; a straight line of nodes')
+    a('        //shears the mesh (official flexbodies docs)')
+    a('        {"collision":false},')
+    for n, z in axis:
+        a(f'        ["{n}b", {off_x}, {rt[1]}, {z}],')
+    a('        {"collision":true},')
     a('        {"group":""},')
     a('    ],')
     a('    "beams": [')
     a('        ["id1:", "id2:"],')
     a('        {"beamPrecompression":1, "beamType":"|NORMAL"},')
-    a('        //--tube structure: chain + skip-one braces (a node every ~0.5 m')
-    a('        //keeps the flexbody binding sound; moderate spring/damp keeps the')
-    a('        //structure numerically stable)--')
+    a('        //--ladder truss structure--')
     a('        {"beamSpring":351000,"beamDamp":120},')
     a('        {"beamDeform":30000,"beamStrength":80000},')
+    chain = ["snb", "snf", "snp"] + [n for n, _ in axis]
     for i in range(len(chain) - 1):
         a(f'        ["{chain[i]}","{chain[i+1]}"],')
     for i in range(len(chain) - 2):
         a(f'        ["{chain[i]}","{chain[i+2]}"],')
     a('        ["snb","snr"],')
-    if len(chain) > 5:
-        a(f'        ["snf","{chain[4]}"],')
-        a(f'        ["snb","{chain[-1]}"],')
+    offs = [f"{n}b" for n, _ in axis]
+    for i in range(len(offs) - 1):
+        a(f'        ["{offs[i]}","{offs[i+1]}"],')
+    for (n, _), ob in zip(axis, offs):  # rungs
+        a(f'        ["{n}","{ob}"],')
+    for i in range(len(axis) - 1):      # cross diagonals
+        a(f'        ["{axis[i][0]}","{offs[i+1]}"],')
+        a(f'        ["{offs[i]}","{axis[i+1][0]}"],')
+    a(f'        ["snp","{offs[0]}"],')
+    a(f'        ["snf","{offs[0]}"],')
     a('        //--attachment to the engine block--')
     a('        //optional: silently skipped on engines without the standard e1..e4 nodes')
     a('        {"beamSpring":251000,"beamDamp":100},')
     a('        {"beamDeform":25000,"beamStrength":60000},')
     a(f'        {{"breakGroup":"{veh}_snorkel_break"}},')
     a('        {"optional":true},')
-    for n in chain:
+    for n in ["snb", "snf", "snp"] + [n for n, _ in axis]:
         for e in ("e1r", "e2r", "e3r", "e4r"):
             a(f'        ["{n}","{e}"],')
         if n in ANCHOR_EXTRA:

@@ -22,7 +22,7 @@ import xml.etree.ElementTree as ET
 
 MAX_GAP = 0.75          # metres; proven fine at 0.75, shears somewhere >0.8
 STIFFNESS_MARGIN = 4    # worst node stiffness must stay below limit/margin
-NODE_WEIGHT = 2.0
+NODE_WEIGHT = 1.2
 PHYS_RATE = 2000.0
 
 failures = []
